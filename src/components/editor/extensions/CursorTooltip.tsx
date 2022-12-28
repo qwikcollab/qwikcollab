@@ -1,39 +1,34 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { EditorView, showTooltip, Tooltip } from '@codemirror/view';
-import { Socket } from 'socket.io-client';
 import { CursorPositionStore } from '../../../utils/CursorPositionStore';
-import { CursorPosition } from '../../../types';
+import { CurrentUser, CursorPosition } from '../../../types';
+import { Connection } from '../../../utils/Connection';
+import { UsersStore } from '../../../utils/UsersStore';
 
-const cursorTooltipField = (socket: Socket) =>
+const cursorTooltipField = (currentUser: CurrentUser, socket = Connection.getSocket()) =>
   StateField.define<readonly Tooltip[]>({
     create: getCursorTooltips,
     update(tooltips, tr) {
       const head = tr.selection?.main.head;
       const anchor = tr.selection?.main.anchor;
 
-      // Doc didn't change but cursor position changed
+      console.log('cursortooltip', tr.docChanged, tr.changes.length);
+
+      // Doc didn't change but cursor position changed for current user (eg: mouse click)
       if (
         !tr.docChanged &&
         head &&
-        CursorPositionStore.hasPositionChanged({ socketId: socket.id, head, anchor })
+        CursorPositionStore.hasPositionChanged({ userId: currentUser.userId, head, anchor })
       ) {
-        console.log('position changed');
-        CursorPositionStore.insertOrUpdatePosition({ socketId: socket.id, head, anchor });
+        CursorPositionStore.insertOrUpdatePosition({ userId: currentUser.userId, head, anchor });
         socket.emit('positionUpdateFromClient', {
           head,
-          anchor
+          anchor,
+          userId: currentUser.userId
         });
       }
 
-      // console.log('sending cursor update');
-      // if (tr.selection) {
-      //   socket.emit( 'cursorUpdateFromClient', {
-      //     from: tr.selection?.main.from,
-      //     to: tr.selection?.main.to,
-      //   })
-      // }
-      // console.log(tr.selection?.main, 'main');
-
+      // TODO: optimise here
       return getCursorTooltipsNew(tr.state);
 
       if (!tr.docChanged && !tr.selection) return tooltips;
@@ -42,6 +37,7 @@ const cursorTooltipField = (socket: Socket) =>
     },
 
     provide: (field: any) => {
+      console.log('provide: ', field);
       return showTooltip.computeN([field], (state) => {
         return state.field(field);
       });
@@ -51,15 +47,17 @@ const cursorTooltipField = (socket: Socket) =>
 function getCursorTooltipsNew(state: EditorState) {
   const chars = state.doc.length;
 
+  console.log('getCursorTooltipsNew()');
   return CursorPositionStore.getPositions()
     .filter((obj: any) => {
       if (obj.head > chars) {
-        console.log(`${obj.socketId}: invalid position ${obj.head} in total ${chars}`);
+        console.log(`${obj.name}: invalid position ${obj.head} in total ${chars}`);
         return false;
       }
       return true;
     })
     .map((obj: CursorPosition) => {
+      console.log(obj.head, obj.anchor);
       return {
         pos: obj.head,
         end: obj.anchor,
@@ -67,9 +65,10 @@ function getCursorTooltipsNew(state: EditorState) {
         strictSide: true,
         arrow: true,
         create: () => {
+          const name = UsersStore[obj.userId]?.name ?? 'anonymous';
           let dom = document.createElement('div');
           dom.className = 'cm-tooltip-cursor';
-          dom.textContent = `${obj.socketId.substring(0, 3)} ${obj.head}`;
+          dom.textContent = `${name} ${obj.head}`;
           return { dom };
         }
       };
@@ -87,6 +86,7 @@ function getCursorTooltips(state: EditorState) {
       let text = `Sudheer ${text2}`;
       return {
         pos: range.head,
+        end: range.anchor,
         above: true,
         strictSide: true,
         arrow: true,
@@ -116,6 +116,6 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
   }
 });
 
-export function cursorTooltip(socket: Socket) {
-  return [cursorTooltipField(socket), cursorTooltipBaseTheme];
+export function cursorTooltip(currentUser: CurrentUser) {
+  return [cursorTooltipField(currentUser), cursorTooltipBaseTheme];
 }

@@ -1,32 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Editor } from '../components/editor/Editor';
 import { NameModal } from '../components/nameModal/NameModal';
-import io, { Socket } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import { ExistingState, User } from '../types';
 import { ConnectionSignal } from '../components/connectionSignal/ConnectionSignal';
 import { ConnectedUsers } from '../components/connectedUsers/ConnectedUsers';
+import { Connection } from '../utils/Connection';
+import { v4 as uuid } from 'uuid';
+import { UsersStore } from '../utils/UsersStore';
 
 export const CodePage = () => {
   const { roomId } = useParams();
   const [name, setName] = useState('');
-  const [socket, setSocket] = useState<Socket>();
   const [connected, setConnected] = useState(false);
   const [initialState, setInitialState] = useState<ExistingState | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [modalVisible, setModalVisible] = useState(true);
+  const userRef = useRef<{ userId: string; name?: string }>({ userId: uuid() });
 
   useEffect(() => {
-    // @ts-ignore
-    const socket = io(import.meta.env.VITE_API_ENDPOINT ?? '', { transports: ['websocket'] });
-    setSocket(socket);
+    const socket = Connection.getSocket();
+
     socket.on('connect', () => {
       setConnected(true);
     });
 
     socket.on('user-joined', (user: User) => {
       console.log(`${user.name} joined room`);
-      setUsers((prev) => [...prev, user]);
+      UsersStore[user.userId ?? ''] = user;
+
+      setUsers((prev) => {
+        const index = prev.findIndex((u) => u.userId === user.userId);
+        if (index === -1) {
+          return [...prev, user];
+        }
+        prev[index] = user;
+        return [...prev];
+      });
     });
 
     socket.on('user-left', (socketId: string) => {
@@ -56,12 +66,19 @@ export const CodePage = () => {
 
   useEffect(() => {
     if (!modalVisible && connected) {
-      console.log('modalVisible', modalVisible, connected);
-      socket?.emit('join-room', { roomId, name }, function (estate: ExistingState) {
-        console.log('initial state', estate);
-        setInitialState(estate);
-        setUsers(estate.users);
-      });
+      const currentUser: User = { roomId: roomId ?? '', name, userId: userRef.current.userId };
+      UsersStore[currentUser.userId] = currentUser;
+      userRef.current.name = name;
+      Connection.getSocket().emit(
+        'join-room',
+        { roomId, name, userId: userRef.current.userId },
+        function (estate: ExistingState) {
+          console.log('initial state', estate);
+          setInitialState(estate);
+          setUsers(estate.users);
+          estate.users.forEach((u) => (UsersStore[u.userId] = u));
+        }
+      );
     }
   }, [modalVisible, connected]);
 
@@ -77,7 +94,7 @@ export const CodePage = () => {
             <ConnectedUsers users={users} />
           </div>
           <div className={'flex w-5/6'}>
-            <Editor socket={socket} initialState={initialState} />
+            <Editor initialState={initialState} userRef={userRef} />
           </div>
         </div>
       ) : (

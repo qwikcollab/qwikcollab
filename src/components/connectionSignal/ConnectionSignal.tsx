@@ -6,7 +6,7 @@ export const ConnectionSignal = ({ connected }: any) => {
       {connected ? (
         <span>
           <CheckCircle className={'inline text-green-400 align-middle'} />
-          <span className={'text-sm text-gray-400'}> Connected</span>
+          <span className={'text-sm text-gray-400'}> Connected </span>
         </span>
       ) : (
         <span>

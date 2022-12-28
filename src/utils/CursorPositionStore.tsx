@@ -1,16 +1,26 @@
 import { CursorPosition } from '../types';
+import { ChangeSet } from '@codemirror/state';
 
 export class CursorPositionStore {
-  static _store: CursorPosition[] = [];
+  static store: CursorPosition[] = [];
 
   static hasNew = false;
 
+  public static mapChanges(changes: ChangeSet) {
+    this.store.forEach((pos) => {
+      pos.head = changes.mapPos(pos.head);
+      if (pos.anchor) {
+        pos.anchor = changes.mapPos(pos.anchor);
+      }
+    });
+  }
+
   public static insertOrUpdatePosition(cpos: CursorPosition) {
-    const { anchor, head, socketId } = cpos;
-    const pos = this._store.find((o) => o.socketId === socketId);
+    const { head, userId } = cpos;
+    const pos = this.store.find((o) => o.userId === userId);
 
     if (!pos) {
-      this._store.push({ socketId, head, anchor });
+      this.store.push(cpos);
       this.hasNew = true;
       return;
     }
@@ -19,26 +29,22 @@ export class CursorPositionStore {
       return;
     }
 
-    this._store = this._store.map((obj: any) => {
-      if (obj.socketId === socketId) {
+    this.store = this.store.map((obj: any) => {
+      if (obj.userId === userId) {
         this.hasNew = true;
-        return {
-          socketId,
-          head,
-          anchor
-        };
+        return cpos;
       }
       return obj;
     });
   }
 
   public static getPositions(): CursorPosition[] {
-    return this._store;
+    return this.store;
   }
 
   public static hasPositionChanged(cpos: CursorPosition) {
-    const { head, anchor, socketId } = cpos;
-    const pos = this._store.find((o) => o.socketId === socketId);
+    const { head, userId } = cpos;
+    const pos = this.store.find((o) => o.userId === userId);
     if (!pos) {
       return true;
     }

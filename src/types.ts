@@ -1,13 +1,18 @@
 import { Update } from '@codemirror/collab';
 
+export interface CurrentUser {
+  name: string;
+  userId: string;
+}
+
 export interface JoinRoomMessage {
   roomId: string;
   name: string;
-  userId?: string;
+  userId: string;
 }
 
 export interface User extends JoinRoomMessage {
-  socketId: string;
+  socketId?: string;
 }
 
 export interface EditorChangesMessage {
@@ -18,7 +23,8 @@ export interface EditorChangesMessage {
   }[];
   roomId: string;
   head: number;
-  socketId: string;
+  socketId?: string;
+  userId: string;
 }
 
 export interface ExistingState {
@@ -28,7 +34,8 @@ export interface ExistingState {
 }
 
 export interface CursorPosition {
-  socketId: string;
+  userId: string;
+  socketId?: string;
   head: number;
   anchor?: number;
 }

@@ -1,3 +1,7 @@
+const isValidName = (name: string | null | undefined) => {
+  return !(!name || name.length < 3);
+};
+
 export const NameModal = ({ name, setName, modalVisible, setModalVisible }: any) => {
   return (
     <div className={`modal modal-open ${modalVisible ? 'visible' : 'invisible'}`}>
@@ -13,12 +17,18 @@ export const NameModal = ({ name, setName, modalVisible, setModalVisible }: any)
             className="input input-bordered w-full"
             value={name}
             onChange={({ target: { value } }) => setName(value)}
+            onKeyUp={(e) => {
+              e.key === 'Enter' && isValidName(name) && setModalVisible(false);
+            }}
             required
+            autoFocus={true}
           />
           <div className="modal-action">
-            <button className="btn btn-success" onClick={() => name && setModalVisible(false)}>
-              {' '}
-              Done{' '}
+            <button
+              className="btn btn-success"
+              onClick={() => isValidName(name) && setModalVisible(false)}
+            >
+              Done
             </button>
           </div>
         </div>
