@@ -1,0 +1,16 @@
+name: Production Deploy
+on:
+  push:
+    branches:
+      - master
+      
+jobs:
+  deploy:
+    name: 'Production deploy for web client'
+    steps:
+      - uses: jsmrcaga/action-netlify-deploy@v1.1.0
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TO_SKY_TOKEN }}
+          NETLIFY_DEPLOY_TO_PROD: true
+          build_command: npm run build
+          NETLIFY_SITE_ID: ${{ secrets.QWIKCOLLAB_PROD_NETLIFY_SITE_ID }}
