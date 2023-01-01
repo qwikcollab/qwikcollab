@@ -9,9 +9,22 @@ jobs:
     name: 'Production deploy for web client'
     runs-on: ubuntu-latest
     steps:
-      - uses: jsmrcaga/action-netlify-deploy@v1.1.0
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Use Node.js 17.x
+        uses: actions/setup-node@v3
         with:
+          node-version: 17.x
+      - name: Install dependencies
+        run: npm install
+      - name: Generate build
+        run: VITE_API_ENDPOINT=${{ secrets.VITE_API_ENDPOINT }} npm run build
+      - name: Deploy to netlify
+        uses: nwtgck/actions-netlify@v1.2
+        with:
+          publish-dir: './dist'
+          production-branch: master
+        env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TO_SKY_TOKEN }}
           NETLIFY_DEPLOY_TO_PROD: true
-          build_command: npm run build
           NETLIFY_SITE_ID: ${{ secrets.QWIKCOLLAB_PROD_NETLIFY_SITE_ID }}
