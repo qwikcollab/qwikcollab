@@ -1,11 +1,11 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { EditorView, showTooltip, Tooltip } from '@codemirror/view';
 import { CursorPositionStore } from '../../../utils/CursorPositionStore';
-import { CurrentUser, CursorPosition } from '../../../types';
+import { CursorPosition } from '../../../types';
 import { Connection } from '../../../utils/Connection';
 import { UsersStore } from '../../../utils/UsersStore';
 
-const cursorTooltipField = (currentUser: CurrentUser, socket = Connection.getSocket()) =>
+const cursorTooltipField = (socket = Connection.getSocket()) =>
   StateField.define<readonly Tooltip[]>({
     create: getCursorTooltips,
     update(tooltips, tr) {
@@ -18,13 +18,17 @@ const cursorTooltipField = (currentUser: CurrentUser, socket = Connection.getSoc
       if (
         !tr.docChanged &&
         head &&
-        CursorPositionStore.hasPositionChanged({ userId: currentUser.userId, head, anchor })
+        CursorPositionStore.hasPositionChanged({ userId: UsersStore.self.userId, head, anchor })
       ) {
-        CursorPositionStore.insertOrUpdatePosition({ userId: currentUser.userId, head, anchor });
+        CursorPositionStore.insertOrUpdatePosition({
+          userId: UsersStore.self.userId,
+          head,
+          anchor
+        });
         socket.emit('positionUpdateFromClient', {
           head,
           anchor,
-          userId: currentUser.userId
+          userId: UsersStore.self.userId
         });
       }
 
@@ -65,7 +69,7 @@ function getCursorTooltipsNew(state: EditorState) {
         strictSide: true,
         arrow: true,
         create: () => {
-          const name = UsersStore[obj.userId]?.name ?? 'anonymous';
+          const name = UsersStore.usersMap[obj.userId]?.name ?? 'anonymous';
           let dom = document.createElement('div');
           dom.className = 'cm-tooltip-cursor';
           dom.textContent = `${name} ${obj.head}`;
@@ -116,6 +120,6 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
   }
 });
 
-export function cursorTooltip(currentUser: CurrentUser) {
-  return [cursorTooltipField(currentUser), cursorTooltipBaseTheme];
+export function cursorTooltip() {
+  return [cursorTooltipField(), cursorTooltipBaseTheme];
 }

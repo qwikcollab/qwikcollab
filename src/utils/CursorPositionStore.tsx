@@ -50,4 +50,11 @@ export class CursorPositionStore {
     }
     return pos.head !== head;
   }
+
+  public static removeUser(userId: string) {
+    this.store.splice(
+      this.store.findIndex((cpos) => cpos.userId === userId),
+      1
+    );
+  }
 }

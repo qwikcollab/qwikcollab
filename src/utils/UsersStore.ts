@@ -1,5 +1,9 @@
 import { User } from '../types';
+import { v4 as uuid } from 'uuid';
 
-export const UsersStore: { [userId: string]: User } = {};
+interface IUsersStore {
+  usersMap: { [userId: string]: User };
+  self: { userId: string; name?: string };
+}
 
-export const CurrentUser: User | null = null;
+export const UsersStore: IUsersStore = { usersMap: {}, self: { userId: uuid() } };

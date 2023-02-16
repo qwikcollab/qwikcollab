@@ -12,18 +12,19 @@ export interface JoinRoomMessage {
 }
 
 export interface User extends JoinRoomMessage {
-  socketId?: string;
+  userId: string;
+}
+
+export interface SerializedUpdate {
+  serializedUpdates: JSON;
+  clientID: string;
 }
 
 export interface EditorChangesMessage {
   version: number;
-  updates: {
-    serializedUpdates: JSON;
-    clientID: string;
-  }[];
+  updates: SerializedUpdate[];
   roomId: string;
   head: number;
-  socketId?: string;
   userId: string;
 }
 
@@ -35,7 +36,6 @@ export interface ExistingState {
 
 export interface CursorPosition {
   userId: string;
-  socketId?: string;
   head: number;
   anchor?: number;
 }

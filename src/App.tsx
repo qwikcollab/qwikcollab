@@ -7,6 +7,7 @@ import { NotFoundPage } from './pages/NotFound.page';
 import { Navbar } from './components/navbar/Navbar';
 
 function App() {
+  console.log('App render');
   return (
     <div className="App">
       <Navbar />

@@ -32,14 +32,22 @@ import {
 import { lintKeymap } from '@codemirror/lint';
 import { barf } from 'thememirror';
 import { cursorTooltip } from './extensions/CursorTooltip';
-import { CursorPosition, EditorChangesMessage } from '../../types';
-import { collab, receiveUpdates, Update } from '@codemirror/collab';
+import { CursorPosition, EditorChangesMessage, SerializedUpdate } from '../../types';
+import {
+  collab,
+  getSyncedVersion,
+  receiveUpdates,
+  sendableUpdates,
+  Update
+} from '@codemirror/collab';
 import { Collab } from './extensions/Collab';
 import { CursorPositionStore } from '../../utils/CursorPositionStore';
 import { highlightField, highlightTheme } from './extensions/Highlight';
 import { Connection } from '../../utils/Connection';
+import { useParams } from 'react-router-dom';
 
-export const Editor = ({ initialState, userRef }: any) => {
+export const Editor = ({ initialState, currentUser }: any) => {
+  const { roomId } = useParams();
   const socket = Connection.getSocket();
   const [element, setElement] = useState<HTMLElement>();
 
@@ -52,7 +60,7 @@ export const Editor = ({ initialState, userRef }: any) => {
   useEffect(() => {
     if (!element || !initialState) return;
 
-    console.log('initialstate', initialState.doc, Text.of(initialState.doc) instanceof Text);
+    console.log('editor state create');
 
     const state = EditorState.create({
       doc: Text.of(initialState.doc),
@@ -86,8 +94,8 @@ export const Editor = ({ initialState, userRef }: any) => {
         barf,
         javascript(),
         collab({ startVersion: initialState.updates.length }),
-        Collab.pulgin2,
-        cursorTooltip(userRef.current),
+        Collab.pulgin,
+        cursorTooltip(),
         // underlineKeymap,
         [highlightField, highlightTheme],
         EditorView.lineWrapping,
@@ -127,6 +135,59 @@ export const Editor = ({ initialState, userRef }: any) => {
       console.log('position update from server');
       CursorPositionStore.insertOrUpdatePosition(changes);
       view.dispatch({});
+    });
+
+    socket.io.on('reconnect', () => {
+      // Get pending updates from server while client was offline
+      socket.emit(
+        'getPendingUpdates',
+        {
+          version: getSyncedVersion(view.state),
+          roomId: roomId,
+          userId: currentUser.userId,
+          name: currentUser.name
+        },
+        function (pendingUpdates: SerializedUpdate[]) {
+          console.log('applying pending updates received from server');
+          const changeSet: Update[] = pendingUpdates.map((u) => {
+            return {
+              changes: ChangeSet.fromJSON(u.serializedUpdates),
+              clientID: u.clientID
+            };
+          });
+          const transSpec = receiveUpdates(view.state, changeSet);
+          view.dispatch(transSpec);
+          // TODO: handle cursor position changes of other users, currently it's fine as one extra click syncs it
+
+          syncOfflineChangesWithServer();
+        }
+      );
+
+      const syncOfflineChangesWithServer = () => {
+        // Send client local changes to server while client was offline
+        const unsentUpdates = sendableUpdates(view.state).map((u) => {
+          // Update cursor position of remote users on screen based on local change
+          // Note that this might not update cursor position of current user (eg: cursor is one position behind the insertion change)
+          CursorPositionStore.mapChanges(u.changes);
+
+          return {
+            serializedUpdates: u.changes.toJSON(),
+            clientID: u.clientID
+          };
+        });
+
+        if (!Collab.pushing && unsentUpdates.length) {
+          Collab.pushing = true;
+          console.log(`sending *pending* updates to server ==> ${view.state.selection.main.head}`);
+
+          socket.emit('updateFromClient', {
+            version: getSyncedVersion(view.state),
+            updates: unsentUpdates,
+            head: view.state.selection.main.head
+          });
+          Collab.pushing = false;
+        }
+      };
     });
 
     return () => view.destroy();

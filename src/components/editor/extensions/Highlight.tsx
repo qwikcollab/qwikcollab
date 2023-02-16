@@ -17,7 +17,6 @@ export const highlightField = StateField.define<DecorationSet>({
       )
       .sort((r1, r2) => (r1.from - r2.from ? r1.from - r2.from : r1.to - r2.to));
 
-    console.log('decs', decorations);
     // overwrite existing decorations
     return Decoration.none.update({ add: decorations });
   },

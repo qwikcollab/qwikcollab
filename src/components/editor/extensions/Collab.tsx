@@ -2,17 +2,18 @@ import { ViewPlugin } from '@codemirror/view';
 import { getSyncedVersion, sendableUpdates } from '@codemirror/collab';
 import { CursorPositionStore } from '../../../utils/CursorPositionStore';
 import { Connection } from '../../../utils/Connection';
-
+const socket = Connection.getSocket();
 export class Collab {
   public static pushing = false;
 
   // Inspired from https://github.com/MINERVA-MD/minerva-collab
-  public static pulgin2 = ViewPlugin.define((view) => ({
+  public static pulgin = ViewPlugin.define((view) => ({
     update(editorUpdate) {
-      console.log('collab');
-
       if (editorUpdate.docChanged) {
-        console.log('collab.tsx document changed');
+        if (!socket.connected) {
+          console.log('early return collab plugin due to offline');
+          return;
+        }
         const unsentUpdates = sendableUpdates(view.state).map((u) => {
           // Update cursor position of remote users on screen based on local change
           // Note that this might not update cursor position of current user (eg: cursor is one position behind the insertion change)
@@ -27,7 +28,8 @@ export class Collab {
         if (Collab.pushing || !unsentUpdates.length) return;
         Collab.pushing = true;
         console.log(`sending update to server ==> ${view.state.selection.main.head}`);
-        Connection.getSocket().emit('updateFromClient', {
+
+        socket.emit('updateFromClient', {
           version: getSyncedVersion(view.state),
           updates: unsentUpdates,
           head: view.state.selection.main.head

@@ -6,17 +6,18 @@ import { ExistingState, User } from '../types';
 import { ConnectionSignal } from '../components/connectionSignal/ConnectionSignal';
 import { ConnectedUsers } from '../components/connectedUsers/ConnectedUsers';
 import { Connection } from '../utils/Connection';
-import { v4 as uuid } from 'uuid';
 import { UsersStore } from '../utils/UsersStore';
+import { CursorPositionStore } from '../utils/CursorPositionStore';
 
 export const CodePage = () => {
+  // cant use ref because userId has to be same
+  const userSelf = UsersStore.self;
+  console.log('self', userSelf);
   const { roomId } = useParams();
-  const [name, setName] = useState('');
-  const [connected, setConnected] = useState(false);
+  const [name, setName] = useState(userSelf.name);
+  const [connected, setConnected] = useState(Connection.getSocket().connected);
   const [initialState, setInitialState] = useState<ExistingState | null>(null);
   const [users, setUsers] = useState<User[]>([]);
-  const [modalVisible, setModalVisible] = useState(true);
-  const userRef = useRef<{ userId: string; name?: string }>({ userId: uuid() });
 
   useEffect(() => {
     const socket = Connection.getSocket();
@@ -27,7 +28,7 @@ export const CodePage = () => {
 
     socket.on('user-joined', (user: User) => {
       console.log(`${user.name} joined room`);
-      UsersStore[user.userId ?? ''] = user;
+      UsersStore.usersMap[user.userId ?? ''] = user;
 
       setUsers((prev) => {
         const index = prev.findIndex((u) => u.userId === user.userId);
@@ -39,8 +40,9 @@ export const CodePage = () => {
       });
     });
 
-    socket.on('user-left', (socketId: string) => {
-      setUsers((prev) => prev.filter((user) => user.socketId !== socketId));
+    socket.on('user-left', (userId: string) => {
+      setUsers((prev) => prev.filter((user) => user.userId !== userId));
+      CursorPositionStore.removeUser(userId);
     });
 
     socket.on('disconnect', () => {
@@ -65,22 +67,22 @@ export const CodePage = () => {
   }, []);
 
   useEffect(() => {
-    if (!modalVisible && connected) {
-      const currentUser: User = { roomId: roomId ?? '', name, userId: userRef.current.userId };
-      UsersStore[currentUser.userId] = currentUser;
-      userRef.current.name = name;
+    if (name) {
+      console.log('modal not visible');
+      const currentUser: User = { roomId: roomId ?? '', ...userSelf } as User;
+      UsersStore.usersMap[currentUser.userId] = currentUser;
       Connection.getSocket().emit(
         'join-room',
-        { roomId, name, userId: userRef.current.userId },
+        { roomId, name, userId: currentUser.userId },
         function (estate: ExistingState) {
           console.log('initial state', estate);
           setInitialState(estate);
           setUsers(estate.users);
-          estate.users.forEach((u) => (UsersStore[u.userId] = u));
+          estate.users.forEach((u) => (UsersStore.usersMap[u.userId] = u));
         }
       );
     }
-  }, [modalVisible, connected]);
+  }, [name]);
 
   return (
     <div>
@@ -94,7 +96,7 @@ export const CodePage = () => {
             <ConnectedUsers users={users} />
           </div>
           <div className={'flex w-5/6'}>
-            <Editor initialState={initialState} userRef={userRef} />
+            <Editor initialState={initialState} currentUser={userSelf} />
           </div>
         </div>
       ) : (
@@ -107,12 +109,8 @@ export const CodePage = () => {
           Add New User{' '}
         </a>
       </div>
-      <NameModal
-        name={name}
-        setName={setName}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
+
+      <div>{!name && <NameModal setName={setName} />}</div>
     </div>
   );
 };
