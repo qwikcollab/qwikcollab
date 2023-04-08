@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
+import { TypeAnimation } from './TypeAnimation';
 
 export const HomePage = () => {
   return (
@@ -28,12 +29,10 @@ export const HomePage = () => {
                 </button>
               </Link>
             </div>
+            <div></div>
           </div>
           <div className={'lg:col-span-5'}>
-            <img
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png"
-              alt="mockup"
-            />
+            <TypeAnimation />
           </div>
         </div>
       </section>

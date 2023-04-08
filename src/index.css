@@ -13,3 +13,30 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.qc-cursor-container {
+  position: relative;
+  display: inline-block;
+}
+
+.qc-cursor {
+  position: absolute;
+  top: -30px;
+  right: -2px;
+  width: 0;
+  height: 2.5rem;
+  border-style: solid;
+  border-width: 9px 3px 6px 0;
+  /*border-color: green;*/
+}
+
+.qc-cursor-name {
+  position: absolute;
+  top: -2rem;
+  left: -1px;
+  /*background-color: green;*/
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
