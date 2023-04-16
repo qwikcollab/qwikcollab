@@ -13,7 +13,7 @@ export interface Cursor {
     title?: string;
     line?: string;
     selectedText?: string;
-  }
+  };
   dragStartPosition?: number;
 }
 

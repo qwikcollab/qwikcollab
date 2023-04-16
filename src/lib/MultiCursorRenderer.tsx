@@ -1,10 +1,8 @@
-import {Cursor} from "./types";
+import { Cursor } from './types';
 
 export function renderTextAndCursors(text: string, cursors: Cursor[], cursorIdx = 0) {
   if (cursorIdx === cursors.length) {
-    return (
-      <code>{text.substring(cursors[cursorIdx - 1].pos + 1, text.length)}</code>
-    );
+    return <code>{text.substring(cursors[cursorIdx - 1].pos + 1, text.length)}</code>;
   }
 
   const cursorCurrent = cursors[cursorIdx];
@@ -49,10 +47,12 @@ function renderTextBetweenCursors(cursorPrev: Cursor | null, cursorCurrent: Curs
     return (
       <code>
         <code>
-          {cursorCurrent?.dragStartPosition && text.substring((cursorPrev?.pos ?? -1) + 1, cursorCurrent?.dragStartPosition)}
+          {cursorCurrent?.dragStartPosition &&
+            text.substring((cursorPrev?.pos ?? -1) + 1, cursorCurrent?.dragStartPosition)}
         </code>
         <code className={cursorCurrent?.cursorStyles?.selectedText}>
-          {cursorCurrent?.dragStartPosition && text.substring(cursorCurrent?.dragStartPosition, cursorCurrent.pos + 1)}
+          {cursorCurrent?.dragStartPosition &&
+            text.substring(cursorCurrent?.dragStartPosition, cursorCurrent.pos + 1)}
         </code>
       </code>
     );
@@ -65,10 +65,13 @@ function renderTextBetweenCursors(cursorPrev: Cursor | null, cursorCurrent: Curs
             text.substring(cursorPrev?.pos + 1, cursorPrev?.dragStartPosition + 1)}
         </code>
         <code>
-          {cursorPrev?.dragStartPosition && cursorCurrent?.dragStartPosition && text.substring(cursorPrev?.dragStartPosition + 1, cursorCurrent?.dragStartPosition)}
+          {cursorPrev?.dragStartPosition &&
+            cursorCurrent?.dragStartPosition &&
+            text.substring(cursorPrev?.dragStartPosition + 1, cursorCurrent?.dragStartPosition)}
         </code>
         <code className={cursorCurrent?.cursorStyles?.selectedText}>
-          {cursorCurrent?.dragStartPosition && text.substring(cursorCurrent?.dragStartPosition, cursorCurrent.pos + 1)}
+          {cursorCurrent?.dragStartPosition &&
+            text.substring(cursorCurrent?.dragStartPosition, cursorCurrent.pos + 1)}
         </code>
       </code>
     );

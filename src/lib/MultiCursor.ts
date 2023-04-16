@@ -28,7 +28,7 @@ export default class MultiCursor extends MultiCursorCore {
       this.cursorDrag(cmd.cursorId, cmd.action);
     }
     if (cmd.type === 'backspace') {
-      await this.backspaceMultiple(cmd.cursorId, cmd.times)
+      await this.backspaceMultiple(cmd.cursorId, cmd.times);
     }
 
     this.runCommandsAfterIdx(idx + 1);
@@ -48,7 +48,7 @@ export default class MultiCursor extends MultiCursorCore {
       cursorId,
       times,
       type: 'backspace'
-    })
+    });
     return this;
   }
 
@@ -82,5 +82,4 @@ export default class MultiCursor extends MultiCursorCore {
     });
     return this;
   }
-
 }

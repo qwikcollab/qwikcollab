@@ -87,7 +87,7 @@ export default class MultiCursorCore {
         this.backspaceSingle(cursorIdx);
         ++count;
       }, this.config.backSpeedMs);
-    })
+    });
   }
 
   private backspaceSingle(cursorIdx: number): void {
