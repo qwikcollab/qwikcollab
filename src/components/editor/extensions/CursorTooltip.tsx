@@ -18,17 +18,17 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
       if (
         !tr.docChanged &&
         head &&
-        CursorPositionStore.hasPositionChanged({ userId: UsersStore.self.userId, head, anchor })
+        CursorPositionStore.hasPositionChanged({ userId: UsersStore.self.id, head, anchor })
       ) {
         CursorPositionStore.insertOrUpdatePosition({
-          userId: UsersStore.self.userId,
+          userId: UsersStore.self.id,
           head,
           anchor
         });
         socket.emit('positionUpdateFromClient', {
           head,
           anchor,
-          userId: UsersStore.self.userId
+          userId: UsersStore.self.id
         });
       }
 

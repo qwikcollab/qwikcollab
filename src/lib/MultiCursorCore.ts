@@ -66,7 +66,10 @@ export default class MultiCursorCore {
     let cursorIdx = this.cursorIdToIdxMap[cursorId] ?? -1;
     if (cursorIdx === -1) return;
 
-    let pos = this.cursors[cursorIdx].pos;
+    const cursor = this.cursors[cursorIdx];
+    let pos = cursor.pos;
+    cursor.dragStartPosition = undefined; // when you start typing, the cursor doesn't drag i.e mouseup
+
     this.text = insertString(this.text, pos + 1, letter);
     this.moveAllCursorsAfterPositionToRight(pos);
     this.executeStateChangeCallbacks();
@@ -103,6 +106,9 @@ export default class MultiCursorCore {
         return;
       }
       if (c.pos >= pos) {
+        if (c.dragStartPosition && c.pos !== pos) {
+          ++c.dragStartPosition
+        }
         ++c.pos;
       }
     });
@@ -114,6 +120,9 @@ export default class MultiCursorCore {
         return;
       }
       if (c.pos >= pos) {
+        if (c.dragStartPosition && c.pos !== pos) {
+          --c.dragStartPosition;
+        }
         --c.pos;
       }
     });
@@ -123,6 +132,7 @@ export default class MultiCursorCore {
     let count = 0;
     return new Promise((resolve, reject) => {
       let t = setInterval(() => {
+        console.log('heere');
         if (count === times) {
           clearInterval(t);
           resolve();
@@ -133,6 +143,8 @@ export default class MultiCursorCore {
         } else {
           this.cursorMoveRight(cursorId);
         }
+        this.sortCursors();
+        this.executeStateChangeCallbacks();
         ++count;
       }, this.config.cursorMovementSpeedMs);
     });
@@ -141,19 +153,13 @@ export default class MultiCursorCore {
   private cursorMoveLeft(cursorId: string) {
     let cursorIdx = this.cursorIdToIdxMap[cursorId] ?? -1;
     if (cursorIdx === -1) return;
-
     this.cursors[cursorIdx].pos--;
-    this.sortCursors();
-    this.executeStateChangeCallbacks();
   }
 
   private cursorMoveRight(cursorId: string) {
     let cursorIdx = this.cursorIdToIdxMap[cursorId] ?? -1;
     if (cursorIdx === -1) return;
-
     this.cursors[cursorIdx].pos++;
-    this.sortCursors();
-    this.executeStateChangeCallbacks();
   }
 
   protected cursorDrag(cursorId: string, action: 'start' | 'stop') {

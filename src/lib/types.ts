@@ -14,7 +14,7 @@ export interface Cursor {
     line?: string;
     selectedText?: string;
   };
-  dragStartPosition?: number;
+  dragStartPosition?: number; // this is the position where cursor behaves like mouse down, any movements after this will be selective movements
 }
 
 export interface MoveCommand {

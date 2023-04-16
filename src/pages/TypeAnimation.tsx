@@ -3,35 +3,35 @@ import MultiCursor from '../lib/MultiCursor';
 import { v4 as uuid } from 'uuid';
 import { renderTextAndCursors } from '../lib/MultiCursorRenderer';
 
-const multiCursor = new MultiCursor({ startText: 'Hello World' })
+const multiCursor = new MultiCursor({ startText: 'Collaborative editor for busy engineers' })
   .addCursor({
     name: 'Sudheer',
     id: 'sudh',
     cursorStyles: {
       title: 'bg-green-500',
       line: 'border-green-500',
-      selectedText: 'bg-green-300'
+      selectedText: 'bg-green-600'
     },
-    pos: 3
+    pos: 15
   })
+  .moveCursor('sudh', 3, 'l')
   .addCursor({
     name: 'Roy',
     id: 'roy',
-    pos: 7,
+    pos: 29,
     cursorStyles: {
       title: 'bg-blue-500',
       line: 'border-blue-500',
-      selectedText: 'bg-blue-300'
+      selectedText: 'bg-blue-600'
     }
   })
-  .moveCursor('sudh', 3, 'r')
-  .moveCursor('roy', 3, 'l')
-  .type('sudh', 'abc')
-  .type('roy', 'pqr')
-  .cursorDragStart('sudh')
-  .moveCursor('sudh', 2, 'r')
-  .backSpace('sudh', 2)
-  .backSpace('roy', 2);
+  .type('sudh', ' text')
+  .cursorDragStart('roy')
+  .moveCursor('roy', 8, 'r')
+  .backSpace('sudh', 4)
+  .type('sudh', ' code')
+  .backSpace('roy', 8)
+  .type('roy', 'dev');
 
 export const TypeAnimation = () => {
   const [renderId, setRenderId] = useState<string>(uuid());
