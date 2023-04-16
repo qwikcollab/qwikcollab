@@ -1,20 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Editor } from '../components/editor/Editor';
-import { NameModal } from '../components/nameModal/NameModal';
 import { useParams } from 'react-router-dom';
-import { ExistingState, User } from '../types';
-import { ConnectionSignal } from '../components/connectionSignal/ConnectionSignal';
-import { ConnectedUsers } from '../components/connectedUsers/ConnectedUsers';
+import { ExistingState, Profile, User } from '../types';
+import { ConnectionSignal } from '../components/ConnectionSignal';
+import { ConnectedUsers } from '../components/ConnectedUsers';
 import { Connection } from '../utils/Connection';
 import { UsersStore } from '../utils/UsersStore';
 import { CursorPositionStore } from '../utils/CursorPositionStore';
+import { getProfile } from '../utils/LocalStore';
 
-export const CodePage = () => {
+export default function CodePage() {
   // cant use ref because userId has to be same
-  const userSelf = UsersStore.self;
-  console.log('self', userSelf);
   const { roomId } = useParams();
-  const [name, setName] = useState(userSelf.name);
+  const [profile] = useState<Profile>(getProfile());
   const [connected, setConnected] = useState(Connection.getSocket().connected);
   const [initialState, setInitialState] = useState<ExistingState | null>(null);
   const [users, setUsers] = useState<User[]>([]);
@@ -67,22 +65,24 @@ export const CodePage = () => {
   }, []);
 
   useEffect(() => {
-    if (name) {
-      console.log('modal not visible');
-      const currentUser: User = { roomId: roomId ?? '', ...userSelf } as User;
-      UsersStore.usersMap[currentUser.userId] = currentUser;
-      Connection.getSocket().emit(
-        'join-room',
-        { roomId, name, userId: currentUser.userId },
-        function (estate: ExistingState) {
-          console.log('initial state', estate);
-          setInitialState(estate);
-          setUsers(estate.users);
-          estate.users.forEach((u) => (UsersStore.usersMap[u.userId] = u));
-        }
-      );
-    }
-  }, [name]);
+    const currentUser: User = {
+      roomId: roomId ?? '',
+      userId: profile.id,
+      name: profile.name
+    } as User;
+    UsersStore.usersMap[currentUser.userId] = currentUser;
+    console.log(UsersStore.usersMap, 'dsdss');
+    Connection.getSocket().emit(
+      'join-room',
+      { roomId, name: profile.name, userId: currentUser.userId },
+      function (estate: ExistingState) {
+        console.log('initial state', estate);
+        setInitialState(estate);
+        setUsers(estate.users);
+        estate.users.forEach((u) => (UsersStore.usersMap[u.userId] = u));
+      }
+    );
+  }, []);
 
   return (
     <div>
@@ -96,7 +96,7 @@ export const CodePage = () => {
             <ConnectedUsers users={users} />
           </div>
           <div className={'flex w-5/6'}>
-            <Editor initialState={initialState} currentUser={userSelf} />
+            <Editor initialState={initialState} currentUser={profile} />
           </div>
         </div>
       ) : (
@@ -109,8 +109,6 @@ export const CodePage = () => {
           Add New User{' '}
         </a>
       </div>
-
-      <div>{!name && <NameModal setName={setName} />}</div>
     </div>
   );
-};
+}

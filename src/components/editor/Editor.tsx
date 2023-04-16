@@ -144,7 +144,7 @@ export const Editor = ({ initialState, currentUser }: any) => {
         {
           version: getSyncedVersion(view.state),
           roomId: roomId,
-          userId: currentUser.userId,
+          userId: currentUser.id,
           name: currentUser.name
         },
         function (pendingUpdates: SerializedUpdate[]) {

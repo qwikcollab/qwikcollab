@@ -1,4 +1,4 @@
-import { User } from '../../types';
+import { User } from '../types';
 import { User as UserIcon } from 'react-feather';
 
 export const ConnectedUsers = ({ users }: { users: User[] }) => {

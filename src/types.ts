@@ -1,8 +1,9 @@
 import { Update } from '@codemirror/collab';
 
-export interface CurrentUser {
+export interface Profile {
   name: string;
-  userId: string;
+  id: string;
+  picture: string;
 }
 
 export interface JoinRoomMessage {

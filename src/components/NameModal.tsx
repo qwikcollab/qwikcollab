@@ -1,4 +1,4 @@
-import { UsersStore } from '../../utils/UsersStore';
+import { UsersStore } from '../utils/UsersStore';
 import { useState } from 'react';
 
 const isValidName = (name: string | null | undefined) => {

@@ -1,12 +1,32 @@
-import { Link } from 'react-router-dom';
-import { v4 as uuid } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from './TypeAnimation';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { HttpClient, routes } from '../HttpClient';
+import { setProfile, setToken } from '../utils/LocalStore';
+import { Profile } from '../types';
+import { UsersStore } from '../utils/UsersStore';
 
-export const HomePage = () => {
+export default function HomePage() {
+  const navigate = useNavigate();
+  const responseMessage = async (response: CredentialResponse) => {
+    const resp = await HttpClient.post(routes.register, { credential: response.credential });
+    if (resp.data.token) {
+      setToken(resp.data.token);
+      const profileResponse = await HttpClient.get(routes.profile);
+      const profile: Profile = profileResponse.data;
+      setProfile(profile);
+      UsersStore.self = { name: profile.name, id: profile.id };
+      navigate('/dashboard');
+    }
+  };
+  const errorMessage = () => {
+    console.log('error');
+  };
+
   return (
     <div className={'font-poppins'}>
       <section>
-        <div className={'grid py-8 px-4  mx-auto lg:gap-8 lg:grid-cols-12'}>
+        <div className={'grid py-8 px-4 mx-auto lg:gap-8 lg:grid-cols-12'}>
           <div className={'place-self-center lg:col-span-7'}>
             <h1
               className={
@@ -15,19 +35,15 @@ export const HomePage = () => {
             >
               Collaborative editor for busy engineers
             </h1>
-            <div>
+            <div className={'mb-2'}>
               <ul className={'mb-10 text-left list-disc text-xl md:text-2xl xl:text-2xl'}>
                 <li> Start writing and collaborating with a click of a button</li>
                 <li> No registration required </li>
                 <li> Easy invites </li>
               </ul>
             </div>
-            <div className={'mx-auto'}>
-              <Link to={`/code/${uuid()}`}>
-                <button data-theme="qc" className="btn btn-primary btn-lg">
-                  Start the magic
-                </button>
-              </Link>
+            <div className={'mb-2'}>
+              <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
             </div>
             <div></div>
           </div>
@@ -38,4 +54,4 @@ export const HomePage = () => {
       </section>
     </div>
   );
-};
+}
