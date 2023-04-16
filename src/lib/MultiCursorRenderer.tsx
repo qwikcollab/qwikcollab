@@ -48,11 +48,11 @@ function renderTextBetweenCursors(cursorPrev: Cursor | null, cursorCurrent: Curs
       <code>
         <code>
           {cursorCurrent?.dragStartPosition &&
-            text.substring((cursorPrev?.pos ?? -1) + 1, cursorCurrent?.dragStartPosition)}
+            text.substring((cursorPrev?.pos ?? -1) + 1, cursorCurrent?.dragStartPosition + 1)}
         </code>
         <code className={cursorCurrent?.cursorStyles?.selectedText}>
           {cursorCurrent?.dragStartPosition &&
-            text.substring(cursorCurrent?.dragStartPosition, cursorCurrent.pos + 1)}
+            text.substring(cursorCurrent?.dragStartPosition + 1, cursorCurrent.pos + 1)}
         </code>
       </code>
     );
