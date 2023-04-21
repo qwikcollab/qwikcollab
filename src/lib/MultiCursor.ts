@@ -30,6 +30,9 @@ export default class MultiCursor extends MultiCursorCore {
     if (cmd.type === 'backspace') {
       await this.backspaceMultiple(cmd.cursorId, cmd.times);
     }
+    if (cmd.type === 'add-cursor') {
+      await this.addCursorExec(cmd.cursor)
+    }
 
     this.runCommandsAfterIdx(idx + 1);
   }
@@ -63,14 +66,19 @@ export default class MultiCursor extends MultiCursorCore {
   }
 
   public addCursor(cursor: Cursor) {
-    if (cursor.pos < 0) {
-      cursor.pos = this.text.length - 1;
-    }
-    this.cursors.push(cursor);
-
-    // Maintain order by position
-    this.sortCursors();
+    this.commandQueue.push({
+      cursor,
+      type: "add-cursor"
+    });
     return this;
+    // if (cursor.pos < 0) {
+    //   cursor.pos = this.text.length - 1;
+    // }
+    // this.cursors.push(cursor);
+    //
+    // // Maintain order by position
+    // this.sortCursors();
+    // return this;
   }
 
   public moveCursor(cursorId: string, steps: number, direction: 'l' | 'r') {

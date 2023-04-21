@@ -14,7 +14,7 @@ export default class MultiCursorCore {
       config.startText = 'Hello World';
     }
     if (isEmpty(config.typeSpeedMs)) {
-      config.typeSpeedMs = 300;
+      config.typeSpeedMs = 200;
     }
     if (isEmpty(config.cursorMovementSpeedMs)) {
       config.cursorMovementSpeedMs = 300;
@@ -24,6 +24,7 @@ export default class MultiCursorCore {
     }
 
     this.text = config.startText ?? '';
+    this.cursors = config.initialCursors ?? [];
   }
 
   public addStateChangeCallBack(fn: Function) {
@@ -35,7 +36,8 @@ export default class MultiCursorCore {
     this.stateChangeCallbacks.map((f) => f());
   }
 
-  public addCursor(cursor: Cursor) {
+  public async addCursorExec(cursor: Cursor) {
+    // TODO: add timeout
     if (cursor.pos < 0) {
       cursor.pos = this.text.length - 1;
     }
@@ -95,8 +97,11 @@ export default class MultiCursorCore {
 
   private backspaceSingle(cursorIdx: number): void {
     const posToRemove = this.cursors[cursorIdx].pos;
-    this.text = this.text.slice(0, posToRemove) + this.text.slice(posToRemove + 1);
-    this.moveAllCursorsAfterPositionToLeft(posToRemove);
+    const drag = this.cursors[cursorIdx].dragStartPosition ?? (posToRemove - 1);
+
+    this.text = this.text.slice(0, drag + 1) + this.text.slice(posToRemove + 1);
+    this.cursors[cursorIdx].dragStartPosition = undefined;
+    this.moveAllCursorsAfterPositionToLeft(posToRemove, Math.abs(posToRemove - drag));
     this.executeStateChangeCallbacks();
   }
 
@@ -114,16 +119,16 @@ export default class MultiCursorCore {
     });
   }
 
-  private moveAllCursorsAfterPositionToLeft(pos: number) {
+  private moveAllCursorsAfterPositionToLeft(pos: number, count: number) {
     this.cursors.forEach((c) => {
       if (c.pos === 0) {
         return;
       }
       if (c.pos >= pos) {
         if (c.dragStartPosition && c.pos !== pos) {
-          --c.dragStartPosition;
+          c.dragStartPosition-=count;
         }
-        --c.pos;
+        c.pos-=count;
       }
     });
   }

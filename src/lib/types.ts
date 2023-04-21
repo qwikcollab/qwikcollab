@@ -3,6 +3,7 @@ export interface Config {
   typeSpeedMs: number;
   backSpeedMs: number;
   cursorMovementSpeedMs: number;
+  initialCursors: Cursor[];
 }
 
 export interface Cursor {
@@ -42,8 +43,9 @@ export interface BackspaceCommand {
   type: 'backspace';
 }
 
-export interface AddCursorCommand extends Cursor {
+export interface AddCursorCommand {
+  cursor: Cursor;
   type: 'add-cursor';
 }
 
-export type Command = MoveCommand | TypeCommand | DragCommand | BackspaceCommand;
+export type Command = MoveCommand | TypeCommand | DragCommand | BackspaceCommand | AddCursorCommand;
