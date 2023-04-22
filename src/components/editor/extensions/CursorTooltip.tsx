@@ -1,9 +1,13 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { EditorView, showTooltip, Tooltip } from '@codemirror/view';
-import { CursorPositionStore } from '../../../utils/CursorPositionStore';
+import {
+  isCursorPositionChanged,
+  updateCursorPosition,
+  useCursorStore
+} from '../../../utils/CursorPositionStore';
 import { CursorPosition } from '../../../types';
 import { Connection } from '../../../utils/Connection';
-import { UsersStore } from '../../../utils/UsersStore';
+import { useUsersStore } from '../../../utils/UsersStore';
 
 const cursorTooltipField = (socket = Connection.getSocket()) =>
   StateField.define<readonly Tooltip[]>({
@@ -14,21 +18,21 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
 
       console.log('cursortooltip', tr.docChanged, tr.changes.length);
 
+      const profile = useUsersStore.getState().profile;
+      if (!profile) {
+        return tooltips;
+      }
       // Doc didn't change but cursor position changed for current user (eg: mouse click)
-      if (
-        !tr.docChanged &&
-        head &&
-        CursorPositionStore.hasPositionChanged({ userId: UsersStore.self.id, head, anchor })
-      ) {
-        CursorPositionStore.insertOrUpdatePosition({
-          userId: UsersStore.self.id,
+      if (!tr.docChanged && head && isCursorPositionChanged({ userId: profile.id, head, anchor })) {
+        updateCursorPosition({
+          userId: profile.id,
           head,
           anchor
         });
         socket.emit('positionUpdateFromClient', {
           head,
           anchor,
-          userId: UsersStore.self.id
+          userId: profile.id
         });
       }
 
@@ -41,7 +45,6 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
     },
 
     provide: (field: any) => {
-      console.log('provide: ', field);
       return showTooltip.computeN([field], (state) => {
         return state.field(field);
       });
@@ -51,8 +54,8 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
 function getCursorTooltipsNew(state: EditorState) {
   const chars = state.doc.length;
 
-  console.log('getCursorTooltipsNew()');
-  return CursorPositionStore.getPositions()
+  console.log('getCursorTooltipsNew()', useCursorStore.getState().cursors.values());
+  return Array.from(useCursorStore.getState().cursors.values())
     .filter((obj: any) => {
       if (obj.head > chars) {
         console.log(`${obj.name}: invalid position ${obj.head} in total ${chars}`);
@@ -69,7 +72,7 @@ function getCursorTooltipsNew(state: EditorState) {
         strictSide: true,
         arrow: true,
         create: () => {
-          const name = UsersStore.usersMap[obj.userId]?.name ?? 'anonymous';
+          const name = useUsersStore.getState().users.get(obj.userId)?.name ?? 'anonymous';
           let dom = document.createElement('div');
           dom.className = 'cm-tooltip-cursor';
           dom.textContent = `${name} ${obj.head}`;

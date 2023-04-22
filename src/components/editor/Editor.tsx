@@ -41,7 +41,7 @@ import {
   Update
 } from '@codemirror/collab';
 import { Collab } from './extensions/Collab';
-import { CursorPositionStore } from '../../utils/CursorPositionStore';
+import { mapChangesToCursor, updateCursorPosition } from '../../utils/CursorPositionStore';
 import { highlightField, highlightTheme } from './extensions/Highlight';
 import { Connection } from '../../utils/Connection';
 import { useParams } from 'react-router-dom';
@@ -121,10 +121,12 @@ export const Editor = ({ initialState, currentUser }: any) => {
       const transSpec = receiveUpdates(view.state, changeSet);
 
       // update cursor position changes (offsets)
-      CursorPositionStore.mapChanges(transSpec.changes);
+      mapChangesToCursor(transSpec.changes);
+      // CursorPositionStore.mapChanges(transSpec.changes);
 
       // update cursor pos for the user which typed (since offset happens after cursor)
-      CursorPositionStore.insertOrUpdatePosition(changes);
+      updateCursorPosition(changes);
+      //CursorPositionStore.insertOrUpdatePosition(changes);
 
       view.dispatch(transSpec);
 
@@ -133,7 +135,8 @@ export const Editor = ({ initialState, currentUser }: any) => {
 
     socket.on('positionUpdateFromServer', (changes: CursorPosition) => {
       console.log('position update from server');
-      CursorPositionStore.insertOrUpdatePosition(changes);
+      updateCursorPosition(changes);
+      // CursorPositionStore.insertOrUpdatePosition(changes);
       view.dispatch({});
     });
 
@@ -168,7 +171,9 @@ export const Editor = ({ initialState, currentUser }: any) => {
         const unsentUpdates = sendableUpdates(view.state).map((u) => {
           // Update cursor position of remote users on screen based on local change
           // Note that this might not update cursor position of current user (eg: cursor is one position behind the insertion change)
-          CursorPositionStore.mapChanges(u.changes);
+
+          mapChangesToCursor(u.changes);
+          //CursorPositionStore.mapChanges(u.changes);
 
           return {
             serializedUpdates: u.changes.toJSON(),

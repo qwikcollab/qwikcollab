@@ -34,7 +34,8 @@
     "socket.io-client": "^4.5.3",
     "thememirror": "^2.0.1",
     "typed.js": "^2.0.12",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zustand": "^4.3.7"
   },
   "devDependencies": {
     "@types/codemirror": "^5.60.5",

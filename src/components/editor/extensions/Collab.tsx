@@ -1,6 +1,6 @@
 import { ViewPlugin } from '@codemirror/view';
 import { getSyncedVersion, sendableUpdates } from '@codemirror/collab';
-import { CursorPositionStore } from '../../../utils/CursorPositionStore';
+import { mapChangesToCursor } from '../../../utils/CursorPositionStore';
 import { Connection } from '../../../utils/Connection';
 const socket = Connection.getSocket();
 export class Collab {
@@ -17,7 +17,9 @@ export class Collab {
         const unsentUpdates = sendableUpdates(view.state).map((u) => {
           // Update cursor position of remote users on screen based on local change
           // Note that this might not update cursor position of current user (eg: cursor is one position behind the insertion change)
-          CursorPositionStore.mapChanges(u.changes);
+
+          mapChangesToCursor(u.changes);
+          //CursorPositionStore.mapChanges(u.changes);
 
           return {
             serializedUpdates: u.changes.toJSON(),

@@ -31,7 +31,7 @@ export default class MultiCursor extends MultiCursorCore {
       await this.backspaceMultiple(cmd.cursorId, cmd.times);
     }
     if (cmd.type === 'add-cursor') {
-      await this.addCursorExec(cmd.cursor)
+      await this.addCursorExec(cmd.cursor);
     }
 
     this.runCommandsAfterIdx(idx + 1);
@@ -68,7 +68,7 @@ export default class MultiCursor extends MultiCursorCore {
   public addCursor(cursor: Cursor) {
     this.commandQueue.push({
       cursor,
-      type: "add-cursor"
+      type: 'add-cursor'
     });
     return this;
     // if (cursor.pos < 0) {

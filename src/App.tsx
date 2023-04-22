@@ -8,9 +8,20 @@ import { Navbar } from './components/Navbar';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Dashboard from './pages/Dashboard.page';
 import ProtectedRoute from './components/ProtectedRoute ';
+import { getToken } from './utils/LocalStore';
+import { HttpClient, routes } from './HttpClient';
+import { setProfileState } from './utils/UsersStore';
 
 function App() {
   console.log('App render');
+
+  if (getToken()) {
+    HttpClient.get(routes.profile).then((response) => {
+      setProfileState(response.data);
+      console.log('prrrofile');
+    });
+  }
+
   return (
     <div className="App">
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

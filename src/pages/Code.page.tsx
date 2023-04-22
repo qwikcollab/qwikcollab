@@ -5,17 +5,17 @@ import { ExistingState, Profile, User } from '../types';
 import { ConnectionSignal } from '../components/ConnectionSignal';
 import { ConnectedUsers } from '../components/ConnectedUsers';
 import { Connection } from '../utils/Connection';
-import { UsersStore } from '../utils/UsersStore';
-import { CursorPositionStore } from '../utils/CursorPositionStore';
+import { addUser, deleteUser, setUsers, useUsersStore } from '../utils/UsersStore';
+import { deleteCursor } from '../utils/CursorPositionStore';
 import { getProfile } from '../utils/LocalStore';
 
 export default function CodePage() {
   // cant use ref because userId has to be same
+  const usersStore = useUsersStore((state) => state.users);
   const { roomId } = useParams();
   const [profile] = useState<Profile>(getProfile());
   const [connected, setConnected] = useState(Connection.getSocket().connected);
   const [initialState, setInitialState] = useState<ExistingState | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const socket = Connection.getSocket();
@@ -26,21 +26,13 @@ export default function CodePage() {
 
     socket.on('user-joined', (user: User) => {
       console.log(`${user.name} joined room`);
-      UsersStore.usersMap[user.userId ?? ''] = user;
-
-      setUsers((prev) => {
-        const index = prev.findIndex((u) => u.userId === user.userId);
-        if (index === -1) {
-          return [...prev, user];
-        }
-        prev[index] = user;
-        return [...prev];
-      });
+      addUser(user);
     });
 
     socket.on('user-left', (userId: string) => {
-      setUsers((prev) => prev.filter((user) => user.userId !== userId));
-      CursorPositionStore.removeUser(userId);
+      deleteUser(userId);
+      deleteCursor(userId);
+      // CursorPositionStore.removeUser(userId);
     });
 
     socket.on('disconnect', () => {
@@ -70,8 +62,6 @@ export default function CodePage() {
       userId: profile.id,
       name: profile.name
     } as User;
-    UsersStore.usersMap[currentUser.userId] = currentUser;
-    console.log(UsersStore.usersMap, 'dsdss');
     Connection.getSocket().emit(
       'join-room',
       { roomId, name: profile.name, userId: currentUser.userId },
@@ -79,7 +69,6 @@ export default function CodePage() {
         console.log('initial state', estate);
         setInitialState(estate);
         setUsers(estate.users);
-        estate.users.forEach((u) => (UsersStore.usersMap[u.userId] = u));
       }
     );
   }, []);
@@ -93,7 +82,7 @@ export default function CodePage() {
       {initialState ? (
         <div className={'flex'}>
           <div className={'flex w-1/6'} style={{ height: '70vh' }}>
-            <ConnectedUsers users={users} />
+            <ConnectedUsers users={Array.from(usersStore.values())} />
           </div>
           <div className={'flex w-5/6'}>
             <Editor initialState={initialState} currentUser={profile} />

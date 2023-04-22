@@ -97,7 +97,7 @@ export default class MultiCursorCore {
 
   private backspaceSingle(cursorIdx: number): void {
     const posToRemove = this.cursors[cursorIdx].pos;
-    const drag = this.cursors[cursorIdx].dragStartPosition ?? (posToRemove - 1);
+    const drag = this.cursors[cursorIdx].dragStartPosition ?? posToRemove - 1;
 
     this.text = this.text.slice(0, drag + 1) + this.text.slice(posToRemove + 1);
     this.cursors[cursorIdx].dragStartPosition = undefined;
@@ -112,7 +112,7 @@ export default class MultiCursorCore {
       }
       if (c.pos >= pos) {
         if (c.dragStartPosition && c.pos !== pos) {
-          ++c.dragStartPosition
+          ++c.dragStartPosition;
         }
         ++c.pos;
       }
@@ -126,9 +126,9 @@ export default class MultiCursorCore {
       }
       if (c.pos >= pos) {
         if (c.dragStartPosition && c.pos !== pos) {
-          c.dragStartPosition-=count;
+          c.dragStartPosition -= count;
         }
-        c.pos-=count;
+        c.pos -= count;
       }
     });
   }
@@ -137,7 +137,6 @@ export default class MultiCursorCore {
     let count = 0;
     return new Promise((resolve, reject) => {
       let t = setInterval(() => {
-        console.log('heere');
         if (count === times) {
           clearInterval(t);
           resolve();

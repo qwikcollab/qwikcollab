@@ -1,21 +1,23 @@
 import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from './TypeAnimation';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import { HttpClient, routes } from '../HttpClient';
-import { setProfile, setToken } from '../utils/LocalStore';
+import { HttpClient, routes, setAuthorizationHeader } from '../HttpClient';
+import { setToken } from '../utils/LocalStore';
 import { Profile } from '../types';
-import { UsersStore } from '../utils/UsersStore';
+import { setProfileState } from '../utils/UsersStore';
 
 export default function HomePage() {
   const navigate = useNavigate();
+
   const responseMessage = async (response: CredentialResponse) => {
     const resp = await HttpClient.post(routes.register, { credential: response.credential });
-    if (resp.data.token) {
-      setToken(resp.data.token);
+    const token = resp.data.token;
+    if (token) {
+      setToken(token);
+      setAuthorizationHeader(token);
       const profileResponse = await HttpClient.get(routes.profile);
       const profile: Profile = profileResponse.data;
-      setProfile(profile);
-      UsersStore.self = { name: profile.name, id: profile.id };
+      setProfileState(profile);
       navigate('/dashboard');
     }
   };

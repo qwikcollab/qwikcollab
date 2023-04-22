@@ -9,3 +9,8 @@ export const insertString = (targetString: string, position: number, stringToIns
     targetString.substring(position, targetString.length)
   );
 };
+
+export const deleteKeyFromMap = (map: Map<string, any>, key: string) => {
+  map.delete(key);
+  return map;
+};

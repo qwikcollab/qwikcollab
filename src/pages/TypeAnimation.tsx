@@ -5,7 +5,8 @@ import { renderTextAndCursors } from '../lib/MultiCursorRenderer';
 
 const multiCursor = new MultiCursor({
   startText: 'Collaborative editor for busy engineers',
-  initialCursors:[{
+  initialCursors: [
+    {
       name: 'Sudheer',
       id: 'sudh',
       cursorStyles: {
@@ -14,8 +15,9 @@ const multiCursor = new MultiCursor({
         selectedText: 'bg-green-600'
       },
       pos: 15
-    }]
-  })
+    }
+  ]
+})
   .moveCursor('sudh', 4, 'l')
   .addCursor({
     name: 'Roy',
@@ -45,7 +47,7 @@ const multiCursor = new MultiCursor({
     }
   })
   .cursorDragStart('dv')
-  .moveCursor('dv',11, 'r');
+  .moveCursor('dv', 11, 'r');
 
 export const TypeAnimation = () => {
   const [renderId, setRenderId] = useState<string>(uuid());
@@ -66,9 +68,9 @@ export const TypeAnimation = () => {
           <span className="text-white text-sm">QwikCollab</span>
         </div>
         <div className="h-full bg-black text-white text-sm font-mono p-4">
-      <pre id={renderId}>
-        {renderTextAndCursors(multiCursor.getText(), multiCursor.getCursors())}
-      </pre>
+          <pre id={renderId}>
+            {renderTextAndCursors(multiCursor.getText(), multiCursor.getCursors())}
+          </pre>
         </div>
       </div>
     </div>
