@@ -1,6 +1,6 @@
 import { EditorView, Decoration, DecorationSet } from '@codemirror/view';
 import { StateField } from '@codemirror/state';
-import { useCursorStore } from '../../../utils/CursorPositionStore';
+import { useCursorStore } from '../../../store/CursorStore';
 import { isFinite } from '../../../utils/utils';
 
 const underlineMark = Decoration.mark({ class: 'cm-underline' });

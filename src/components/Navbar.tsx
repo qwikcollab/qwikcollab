@@ -2,7 +2,7 @@ import { GitHub } from 'react-feather';
 // @ts-ignore
 import logo from '../assets/qc-transparent.png';
 import { Link } from 'react-router-dom';
-import { useUsersStore } from '../utils/UsersStore';
+import { useUsersStore } from '../store/UsersStore';
 
 export const Navbar = () => {
   const profile = useUsersStore((state) => state.profile);

@@ -30,13 +30,15 @@ module.exports = {
       },
       "light",
       "dark",
-      "night"
+      "night",
+      "black",
+      "dracula"
     ],
     base: true,
     utils: true,
     logs: true,
     rtl: false,
     prefix: "",
-    darkTheme: "dark",
+    darkTheme: "black",
   },
 }

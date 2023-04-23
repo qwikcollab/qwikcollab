@@ -4,10 +4,10 @@ import {
   isCursorPositionChanged,
   updateCursorPosition,
   useCursorStore
-} from '../../../utils/CursorPositionStore';
+} from '../../../store/CursorStore';
 import { CursorPosition } from '../../../types';
 import { Connection } from '../../../utils/Connection';
-import { useUsersStore } from '../../../utils/UsersStore';
+import { useUsersStore } from '../../../store/UsersStore';
 
 const cursorTooltipField = (socket = Connection.getSocket()) =>
   StateField.define<readonly Tooltip[]>({
@@ -64,7 +64,8 @@ function getCursorTooltipsNew(state: EditorState) {
       return true;
     })
     .map((obj: CursorPosition) => {
-      console.log(obj.head, obj.anchor);
+      const user = useUsersStore.getState().users.get(obj.userId);
+      const cursorColor = user?.preferences?.color;
       return {
         pos: obj.head,
         end: obj.anchor,
@@ -72,10 +73,10 @@ function getCursorTooltipsNew(state: EditorState) {
         strictSide: true,
         arrow: true,
         create: () => {
-          const name = useUsersStore.getState().users.get(obj.userId)?.name ?? 'anonymous';
+          const name = user?.name ?? 'anonymous';
           let dom = document.createElement('div');
-          dom.className = 'cm-tooltip-cursor';
-          dom.textContent = `${name} ${obj.head}`;
+          dom.className = `cm-tooltip-cursor cm-tooltip-${cursorColor}`;
+          dom.textContent = name;
           return { dom };
         }
       };
@@ -109,19 +110,51 @@ function getCursorTooltips(state: EditorState) {
 
 const cursorTooltipBaseTheme = EditorView.baseTheme({
   '.cm-tooltip.cm-tooltip-cursor': {
-    backgroundColor: '#66b',
     color: 'white',
     border: 'none',
     padding: '2px 7px',
     borderRadius: '4px',
+  },
+  '.cm-tooltip.cm-tooltip-red': {
+    backgroundColor: '#ef4444',
     '&.cm-tooltip-arrow:before': {
-      borderTopColor: '#66b'
+      borderTopColor: '#ef4444'
+    },
+    '&.cm-tooltip-arrow:after': {
+      borderTopColor: 'transparent'
+    }
+  },
+  '.cm-tooltip.cm-tooltip-green': {
+    backgroundColor: '#22c55e',
+    '&.cm-tooltip-arrow:before': {
+      borderTopColor: '#22c55e'
+    },
+    '&.cm-tooltip-arrow:after': {
+      borderTopColor: 'transparent'
+    }
+  },
+  '.cm-tooltip.cm-tooltip-blue': {
+    backgroundColor: '#3b82f6',
+    '&.cm-tooltip-arrow:before': {
+      borderTopColor: '#3b82f6'
     },
     '&.cm-tooltip-arrow:after': {
       borderTopColor: 'transparent'
     }
   }
 });
+
+// public static cursorColors = [
+//   { color: '#ef4444', colorLight: '#fca5a5' }, // bg-red-500 and bg-red-300
+//   { color: '#3b82f6', colorLight: '#93c5fd' }, // bg-blue-500 and bg-blue-300
+//   { color: '#22c55e', colorLight: '#86efac' }, // bg-green-500 and bg-green-300
+//   { color: '#eab308', colorLight: '#fde047' }, // bg-yellow-500 and bg-yellow-300
+//   { color: '#8b5cf6', colorLight: '#c4b5fd' }, // bg-purple-500 and bg-purple-300
+//   { color: '#ec4899', colorLight: '#f9a8d4' }, // bg-pink-500 and bg-pink-300
+//   { color: '#14b8a6', colorLight: '#5eead4' }, // bg-teal-500 and bg-teal-300
+//   { color: '#06b6d4', colorLight: '#67e8f9' }, // bg-cyan-500 and bg-cyan-300
+//   { color: '#84cc16', colorLight: '#bef264' }, // bg-lime-500 and bg-lime-300
+// ];
 
 export function cursorTooltip() {
   return [cursorTooltipField(), cursorTooltipBaseTheme];

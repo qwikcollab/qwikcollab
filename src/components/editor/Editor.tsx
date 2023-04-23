@@ -41,7 +41,7 @@ import {
   Update
 } from '@codemirror/collab';
 import { Collab } from './extensions/Collab';
-import { mapChangesToCursor, updateCursorPosition } from '../../utils/CursorPositionStore';
+import { mapChangesToCursor, updateCursorPosition } from '../../store/CursorStore';
 import { highlightField, highlightTheme } from './extensions/Highlight';
 import { Connection } from '../../utils/Connection';
 import { useParams } from 'react-router-dom';

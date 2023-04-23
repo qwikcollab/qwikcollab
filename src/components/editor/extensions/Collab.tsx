@@ -1,6 +1,6 @@
 import { ViewPlugin } from '@codemirror/view';
 import { getSyncedVersion, sendableUpdates } from '@codemirror/collab';
-import { mapChangesToCursor } from '../../../utils/CursorPositionStore';
+import { mapChangesToCursor } from '../../../store/CursorStore';
 import { Connection } from '../../../utils/Connection';
 const socket = Connection.getSocket();
 export class Collab {

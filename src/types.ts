@@ -8,12 +8,16 @@ export interface Profile {
 
 export interface JoinRoomMessage {
   roomId: string;
-  name: string;
+  name: string; // deprecate
   userId: string;
 }
 
 export interface User extends JoinRoomMessage {
   userId: string;
+  picture?: string;
+  preferences?: {
+    color: string;
+  }
 }
 
 export interface SerializedUpdate {

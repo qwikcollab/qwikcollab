@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Editor } from '../components/editor/Editor';
 import { useParams } from 'react-router-dom';
-import { ExistingState, Profile, User } from '../types';
+import { ExistingState, User } from '../types';
 import { ConnectionSignal } from '../components/ConnectionSignal';
 import { ConnectedUsers } from '../components/ConnectedUsers';
 import { Connection } from '../utils/Connection';
-import { addUser, deleteUser, setUsers, useUsersStore } from '../utils/UsersStore';
-import { deleteCursor } from '../utils/CursorPositionStore';
-import { getProfile } from '../utils/LocalStore';
+import { addUser, deleteUser, setUsers, useUsersStore } from '../store/UsersStore';
+import { deleteCursor } from '../store/CursorStore';
 
 export default function CodePage() {
   // cant use ref because userId has to be same
   const usersStore = useUsersStore((state) => state.users);
+  const profile = useUsersStore((state) => state.profile);
+
   const { roomId } = useParams();
-  const [profile] = useState<Profile>(getProfile());
   const [connected, setConnected] = useState(Connection.getSocket().connected);
   const [initialState, setInitialState] = useState<ExistingState | null>(null);
 
@@ -57,14 +57,15 @@ export default function CodePage() {
   }, []);
 
   useEffect(() => {
-    const currentUser: User = {
-      roomId: roomId ?? '',
-      userId: profile.id,
-      name: profile.name
-    } as User;
+    if (!profile) {
+      // throw error
+      console.error('profile object should be filled at this point')
+      return;
+    }
+    console.log('emit join room');
     Connection.getSocket().emit(
       'join-room',
-      { roomId, name: profile.name, userId: currentUser.userId },
+      { roomId, userId: profile.id },
       function (estate: ExistingState) {
         console.log('initial state', estate);
         setInitialState(estate);
@@ -74,7 +75,7 @@ export default function CodePage() {
   }, []);
 
   return (
-    <div>
+    <div data-theme="night">
       <div className="flex justify-between px-2">
         <ConnectionSignal connected={connected} />
       </div>

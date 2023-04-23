@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/Home.page';
@@ -10,17 +10,18 @@ import Dashboard from './pages/Dashboard.page';
 import ProtectedRoute from './components/ProtectedRoute ';
 import { getToken } from './utils/LocalStore';
 import { HttpClient, routes } from './HttpClient';
-import { setProfileState } from './utils/UsersStore';
+import { setProfileState } from './store/UsersStore';
 
 function App() {
   console.log('App render');
 
-  if (getToken()) {
-    HttpClient.get(routes.profile).then((response) => {
-      setProfileState(response.data);
-      console.log('prrrofile');
-    });
-  }
+  useEffect(() => {
+    if (getToken()) {
+      HttpClient.get(routes.profile).then((response) => {
+        setProfileState(response.data);
+      });
+    }
+  }, []);
 
   return (
     <div className="App">

@@ -1,7 +1,7 @@
 import { CursorPosition } from '../types';
 import { ChangeSet } from '@codemirror/state';
 import { create } from 'zustand';
-import { deleteKeyFromMap } from './utils';
+import { deleteKeyFromMap } from '../utils/utils';
 
 interface ICursorStore {
   cursors: Map<string, CursorPosition>;

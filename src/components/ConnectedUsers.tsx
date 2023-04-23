@@ -7,12 +7,16 @@ export const ConnectedUsers = ({ users }: { users: User[] }) => {
       <div> Connected Users </div>
       {users.map((user, index) => {
         return (
-          <div className={'text-2xl text-left pl-2'} key={index}>
-            <UserIcon className={'inline text-green mr-2 text-blue-400'} />
-            {user.name}
+          <div className={'flex text-md text-left pl-2'} key={index}>
+            {
+              user.picture ?
+                <img src={user.picture} alt="Profile picture" className={'w-6 h-6 rounded-full'} /> :
+                <UserIcon className={'inline text-green mr-2 text-blue-400'} />
+            }
+            <span>{user.name}</span>
           </div>
         );
       })}
     </div>
   );
-};
+}

@@ -4,7 +4,7 @@ import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { HttpClient, routes, setAuthorizationHeader } from '../HttpClient';
 import { setToken } from '../utils/LocalStore';
 import { Profile } from '../types';
-import { setProfileState } from '../utils/UsersStore';
+import { setProfileState } from '../store/UsersStore';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function HomePage() {
   return (
     <div className={'font-poppins'}>
       <section>
-        <div className={'grid py-8 px-4 mx-auto lg:gap-8 lg:grid-cols-12'}>
+        <div className={'grid py-8 px-4 mx-auto lg:gap-8 lg:grid-cols-12 h-full'} style={{height: '80vh'}}>
           <div className={'place-self-center lg:col-span-7'}>
             <h1
               className={
@@ -45,7 +45,7 @@ export default function HomePage() {
               </ul>
             </div>
             <div className={'mb-2'}>
-              <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
+              <GoogleLogin size={'large'} width={'300px'} onSuccess={responseMessage} onError={errorMessage} />
             </div>
             <div></div>
           </div>

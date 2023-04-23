@@ -67,7 +67,7 @@ export const TypeAnimation = () => {
           </div>
           <span className="text-white text-sm">QwikCollab</span>
         </div>
-        <div className="h-full bg-black text-white text-sm font-mono p-4">
+        <div className="h-full bg-black text-white text-sm font-mono p-4" style={{background:'#1d1e22'}}>
           <pre id={renderId}>
             {renderTextAndCursors(multiCursor.getText(), multiCursor.getCursors())}
           </pre>

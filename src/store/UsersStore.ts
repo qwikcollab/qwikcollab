@@ -1,7 +1,7 @@
 import { Profile, User } from '../types';
 import { create } from 'zustand';
-import { deleteKeyFromMap } from './utils';
-import { setProfile } from './LocalStore';
+import { deleteKeyFromMap } from '../utils/utils';
+import { setProfile } from '../utils/LocalStore';
 
 interface UserStore {
   users: Map<string, User>;
