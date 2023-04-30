@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import MultiCursor from '../lib/MultiCursor';
 import { v4 as uuid } from 'uuid';
 import { renderTextAndCursors } from '../lib/MultiCursorRenderer';
+import { motion } from "framer-motion";
 
 const multiCursor = new MultiCursor({
   startText: 'Collaborative editor for busy engineers',
@@ -39,7 +40,7 @@ const multiCursor = new MultiCursor({
   .addCursor({
     name: 'Denver',
     id: 'dv',
-    pos: 1,
+    pos: 0,
     cursorStyles: {
       title: 'bg-red-500',
       line: 'border-red-500',
@@ -47,7 +48,7 @@ const multiCursor = new MultiCursor({
     }
   })
   .cursorDragStart('dv')
-  .moveCursor('dv', 11, 'r');
+  .moveCursor('dv', 5, 'r');
 
 export const TypeAnimation = () => {
   const [renderId, setRenderId] = useState<string>(uuid());
@@ -57,22 +58,27 @@ export const TypeAnimation = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center h-full">
-      <div className="w-3/4 h-4/5 bg-gray-900 rounded-xl shadow-xl overflow-hidden">
-        <div className="h-10 bg-gray-800 flex items-center justify-between px-4">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+    <>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex justify-center items-center h-full">
+        <div className="w-3/4 h-4/5 bg-gray-900 rounded-xl shadow-xl overflow-hidden">
+          <div className="h-10 bg-gray-800 flex items-center justify-between px-4">
+            <div className="flex space-x-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            </div>
+            <span className="text-white text-sm">QwikCollab</span>
           </div>
-          <span className="text-white text-sm">QwikCollab</span>
-        </div>
-        <div className="h-full bg-black text-white text-sm font-mono p-4" style={{background:'#1d1e22'}}>
-          <pre id={renderId}>
+          <div
+            className="h-full bg-black text-white text-sm font-mono p-4"
+            style={{ background: '#1d1e22' }}
+          >
+          <span id={renderId} className={"break-all"}>
             {renderTextAndCursors(multiCursor.getText(), multiCursor.getCursors())}
-          </pre>
+          </span>
+          </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </>
   );
 };

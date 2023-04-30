@@ -40,3 +40,7 @@ code {
   border-radius: 3px;
   font-size: 12px;
 }
+
+.tooltip:before, .tooltip:after {
+  z-index: 10 !important;
+}

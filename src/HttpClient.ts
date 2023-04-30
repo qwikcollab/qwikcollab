@@ -20,5 +20,6 @@ export const setAuthorizationHeader = (value: string) => {
 
 export const routes = {
   register: `${import.meta.env.VITE_API_ENDPOINT}/auth/register`,
-  profile: `${import.meta.env.VITE_API_ENDPOINT}/profile`
+  profile: `${import.meta.env.VITE_API_ENDPOINT}/profile`,
+  collabSession: `${import.meta.env.VITE_API_ENDPOINT}/collab-session`,
 };

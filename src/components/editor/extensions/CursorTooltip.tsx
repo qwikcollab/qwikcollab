@@ -8,15 +8,14 @@ import {
 import { CursorPosition } from '../../../types';
 import { Connection } from '../../../utils/Connection';
 import { useUsersStore } from '../../../store/UsersStore';
+import { COLOR_MAP } from '../../../utils/utils';
 
 const cursorTooltipField = (socket = Connection.getSocket()) =>
   StateField.define<readonly Tooltip[]>({
-    create: getCursorTooltips,
+    create: getCursorTooltipsNew,
     update(tooltips, tr) {
       const head = tr.selection?.main.head;
       const anchor = tr.selection?.main.anchor;
-
-      console.log('cursortooltip', tr.docChanged, tr.changes.length);
 
       const profile = useUsersStore.getState().profile;
       if (!profile) {
@@ -54,7 +53,6 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
 function getCursorTooltipsNew(state: EditorState) {
   const chars = state.doc.length;
 
-  console.log('getCursorTooltipsNew()', useCursorStore.getState().cursors.values());
   return Array.from(useCursorStore.getState().cursors.values())
     .filter((obj: any) => {
       if (obj.head > chars) {
@@ -113,30 +111,30 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
     color: 'white',
     border: 'none',
     padding: '2px 7px',
-    borderRadius: '4px',
+    borderRadius: '4px'
   },
   '.cm-tooltip.cm-tooltip-red': {
-    backgroundColor: '#ef4444',
+    backgroundColor: COLOR_MAP.red,
     '&.cm-tooltip-arrow:before': {
-      borderTopColor: '#ef4444'
+      borderTopColor: COLOR_MAP.red
     },
     '&.cm-tooltip-arrow:after': {
       borderTopColor: 'transparent'
     }
   },
   '.cm-tooltip.cm-tooltip-green': {
-    backgroundColor: '#22c55e',
+    backgroundColor: COLOR_MAP.green,
     '&.cm-tooltip-arrow:before': {
-      borderTopColor: '#22c55e'
+      borderTopColor: COLOR_MAP.green
     },
     '&.cm-tooltip-arrow:after': {
       borderTopColor: 'transparent'
     }
   },
   '.cm-tooltip.cm-tooltip-blue': {
-    backgroundColor: '#3b82f6',
+    backgroundColor: COLOR_MAP.blue,
     '&.cm-tooltip-arrow:before': {
-      borderTopColor: '#3b82f6'
+      borderTopColor: COLOR_MAP.blue
     },
     '&.cm-tooltip-arrow:after': {
       borderTopColor: 'transparent'

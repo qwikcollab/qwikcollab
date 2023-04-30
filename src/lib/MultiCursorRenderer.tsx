@@ -11,7 +11,7 @@ export function renderTextAndCursors(text: string, cursors: Cursor[], cursorIdx 
   return (
     <code>
       <code>{renderTextBetweenCursors(cursorPrev, cursorCurrent, text)}</code>
-      <span className="qc-cursor-container">
+      <span className="qc-cursor-container break-normal">
         <span className={`qc-cursor ${cursorCurrent.cursorStyles?.line}`}></span>
         <span className={`qc-cursor-name ${cursorCurrent.cursorStyles?.title}`}>
           {cursorCurrent.name}

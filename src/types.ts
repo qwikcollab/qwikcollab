@@ -17,7 +17,7 @@ export interface User extends JoinRoomMessage {
   picture?: string;
   preferences?: {
     color: string;
-  }
+  };
 }
 
 export interface SerializedUpdate {

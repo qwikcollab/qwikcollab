@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/Home.page';
@@ -17,7 +17,9 @@ function App() {
 
   useEffect(() => {
     if (getToken()) {
+      console.log('req started');
       HttpClient.get(routes.profile).then((response) => {
+        console.log('req ended');
         setProfileState(response.data);
       });
     }

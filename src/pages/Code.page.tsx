@@ -59,7 +59,7 @@ export default function CodePage() {
   useEffect(() => {
     if (!profile) {
       // throw error
-      console.error('profile object should be filled at this point')
+      console.error('profile object should be filled at this point');
       return;
     }
     console.log('emit join room');
@@ -76,29 +76,27 @@ export default function CodePage() {
 
   return (
     <div data-theme="night">
-      <div className="flex justify-between px-2">
-        <ConnectionSignal connected={connected} />
+      <div className="flex flex-row justify-between">
+        <div className="flex basis-1/2 justify-start pl-2">
+          <ConnectedUsers users={Array.from(usersStore.values())} />
+        </div>
+        <div className="basis-1/2">
+          <ConnectionSignal connected={connected} />
+        </div>
       </div>
 
       {initialState ? (
         <div className={'flex'}>
-          <div className={'flex w-1/6'} style={{ height: '70vh' }}>
-            <ConnectedUsers users={Array.from(usersStore.values())} />
-          </div>
-          <div className={'flex w-5/6'}>
+          {/*<div className={'flex w-1/6'} style={{ height: '70vh' }}>*/}
+          {/*  <ConnectedUsers users={Array.from(usersStore.values())} />*/}
+          {/*</div>*/}
+          <div className={'flex w-full'}>
             <Editor initialState={initialState} currentUser={profile} />
           </div>
         </div>
       ) : (
         <span> Loading ... </span>
       )}
-
-      <div className={'m-2 bg-blue-900 text-green-400 font-bold text-lg rounded'}>
-        <a href={window.location.href} target={'_blank'}>
-          {' '}
-          Add New User{' '}
-        </a>
-      </div>
     </div>
   );
 }

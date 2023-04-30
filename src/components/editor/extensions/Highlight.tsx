@@ -24,5 +24,5 @@ export const highlightField = StateField.define<DecorationSet>({
 });
 
 export const highlightTheme = EditorView.baseTheme({
-  '.cm-underline': { background: 'blueviolet' }
+  '.cm-underline': { background: '#264F78' }
 });

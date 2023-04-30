@@ -10,6 +10,7 @@ export class Connection {
 
   public static getSocket(): Socket {
     if (!this.socket) {
+      console.log('connecting sockets');
       // @ts-ignore
       this.socket = io(import.meta.env.VITE_API_ENDPOINT ?? '', { transports: ['websocket'] });
     }

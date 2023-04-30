@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { javascript } from '@codemirror/lang-javascript';
 import { ChangeSet, EditorState, Text } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
+import { oneDarkTheme } from '@codemirror/theme-one-dark';
 import {
   keymap,
   highlightSpecialChars,
@@ -100,7 +101,8 @@ export const Editor = ({ initialState, currentUser }: any) => {
         [highlightField, highlightTheme],
         EditorView.lineWrapping,
         EditorView.theme({
-          '.cm-content, .cm-gutter': { minHeight: '70vh' }
+          '&.cm-editor': { height: '100%' },
+          '.cm-scroller': { overflow: 'auto' }
         })
       ]
     });
@@ -201,10 +203,11 @@ export const Editor = ({ initialState, currentUser }: any) => {
   return (
     <div
       id="editorParent text-left"
-      data-theme="light"
-      className="border-green-400 border-2 mx-2 w-full"
+      className="border-green-400 border-2 mx-2 w-full position-relative"
     >
-      <div className={'text-left text-lg'} ref={ref}></div>
+      {/* div with 2 divs inside equally split on screen */}
+
+      <div className={'text-left text-lg'} style={{ height: '70vh' }} ref={ref}></div>
     </div>
   );
 };
