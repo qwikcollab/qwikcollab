@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { getToken } from './utils/LocalStore';
-//axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-//axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'true';
-//axios.defaults.withCredentials = true;
+const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
 
 export const HttpClient = axios.create({
   headers: {
@@ -18,8 +16,21 @@ export const setAuthorizationHeader = (value: string) => {
   HttpClient.defaults.headers.common['Authorization'] = value;
 };
 
+HttpClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      return (window.location.href = '/');
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const routes = {
-  register: `${import.meta.env.VITE_API_ENDPOINT}/auth/register`,
-  profile: `${import.meta.env.VITE_API_ENDPOINT}/profile`,
-  collabSession: `${import.meta.env.VITE_API_ENDPOINT}/collab-session`,
+  register: `${apiEndpoint}/auth/register`,
+  registerGoogle: `${apiEndpoint}/auth/register/google`,
+  profile: `${apiEndpoint}/profile`,
+  collabSession: `${apiEndpoint}/collab-sessions`
 };

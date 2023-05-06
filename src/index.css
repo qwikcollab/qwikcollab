@@ -41,6 +41,7 @@ code {
   font-size: 12px;
 }
 
-.tooltip:before, .tooltip:after {
+.tooltip:before,
+.tooltip:after {
   z-index: 10 !important;
 }

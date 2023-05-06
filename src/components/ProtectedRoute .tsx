@@ -14,6 +14,9 @@ export default function ProtectedRoute({ children }) {
         .then((response) => {
           setProfileState(response.data);
         })
+        .catch((error) => {
+          // if (error.error.sort()
+        })
         .finally(() => {
           setLoading(false);
         });

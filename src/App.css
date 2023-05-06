@@ -3,3 +3,11 @@ Primary: voilet-600 #7c3aed
 Secondary: emerald-400 #34d399
 Marriweather, Rasa Bold
  */
+
+.col-primary {
+  color: #7c3aed;
+}
+
+.col-secondary {
+  color: #34d399;
+}

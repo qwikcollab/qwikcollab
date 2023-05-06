@@ -1,7 +1,15 @@
-export const NotFoundPage = () => {
+import NotFoundComp from '../components/NotFoundComp';
+
+export default function NotFound() {
+  // @ts-ignore
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">404 Not Found</h1>
+      <NotFoundComp
+        line1={'searching...'}
+        line2={'404'}
+        line3={'Oops! Page not found.'}
+        goBackLink={'/'}
+      />
     </div>
   );
-};
+}

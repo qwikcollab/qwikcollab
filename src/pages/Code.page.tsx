@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Editor } from '../components/editor/Editor';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ExistingState, User } from '../types';
 import { ConnectionSignal } from '../components/ConnectionSignal';
 import { ConnectedUsers } from '../components/ConnectedUsers';
 import { Connection } from '../utils/Connection';
 import { addUser, deleteUser, setUsers, useUsersStore } from '../store/UsersStore';
 import { deleteCursor } from '../store/CursorStore';
+import Loader from '../components/Loader';
+import NotFoundComp from '../components/NotFoundComp';
 
 export default function CodePage() {
+  const navigate = useNavigate();
   // cant use ref because userId has to be same
   const usersStore = useUsersStore((state) => state.users);
   const profile = useUsersStore((state) => state.profile);
@@ -16,6 +19,7 @@ export default function CodePage() {
   const { roomId } = useParams();
   const [connected, setConnected] = useState(Connection.getSocket().connected);
   const [initialState, setInitialState] = useState<ExistingState | null>(null);
+  const [roomNotFound, setRoomNotFound] = useState(false);
 
   useEffect(() => {
     const socket = Connection.getSocket();
@@ -56,17 +60,31 @@ export default function CodePage() {
     };
   }, []);
 
+  /*
+  a user from dashboard click visits here
+  a user from external link visits here
+    - valid link
+    - invalid link
+
+   */
+
   useEffect(() => {
     if (!profile) {
       // throw error
       console.error('profile object should be filled at this point');
+      navigate('/404');
       return;
     }
+    // verify the r
     console.log('emit join room');
     Connection.getSocket().emit(
       'join-room',
       { roomId, userId: profile.id },
-      function (estate: ExistingState) {
+      function (estate: ExistingState | { failed: boolean }) {
+        if ('failed' in estate) {
+          setRoomNotFound(true);
+          return;
+        }
         console.log('initial state', estate);
         setInitialState(estate);
         setUsers(estate.users);
@@ -85,7 +103,9 @@ export default function CodePage() {
         </div>
       </div>
 
-      {initialState ? (
+      {!(initialState || roomNotFound) && <Loader />}
+
+      {initialState && (
         <div className={'flex'}>
           {/*<div className={'flex w-1/6'} style={{ height: '70vh' }}>*/}
           {/*  <ConnectedUsers users={Array.from(usersStore.values())} />*/}
@@ -94,8 +114,15 @@ export default function CodePage() {
             <Editor initialState={initialState} currentUser={profile} />
           </div>
         </div>
-      ) : (
-        <span> Loading ... </span>
+      )}
+
+      {roomNotFound && (
+        <NotFoundComp
+          line1={'searching...'}
+          line2={'...'}
+          line3={'Collab session does not exist !!'}
+          goBackLink={'/dashboard'}
+        />
       )}
     </div>
   );
