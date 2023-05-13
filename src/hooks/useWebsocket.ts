@@ -4,6 +4,9 @@ import { User } from '../types';
 import { addUser, deleteUser } from '../store/UsersStore';
 import { deleteCursor } from '../store/CursorStore';
 
+/**
+ * TODO: use this hook to handle websocket events
+ */
 export default function useWebsocket() {
   const [connected, setConnected] = useState(Connection.getSocket().connected);
 
