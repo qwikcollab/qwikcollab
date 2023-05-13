@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/Home.page';
@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute ';
 
 function App() {
   console.log('App render');
+  console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID, 'check');
 
   return (
     <div className="App">
