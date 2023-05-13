@@ -19,6 +19,9 @@ jobs:
         run: npm install
       - name: Generate build
         run: VITE_API_ENDPOINT=${{ secrets.VITE_API_ENDPOINT }} npm run build
+        env:
+          VITE_API_ENDPOINT: ${{ secrets.VITE_API_ENDPOINT }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
       - name: Deploy to netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
@@ -28,4 +31,3 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TO_SKY_TOKEN }}
           NETLIFY_DEPLOY_TO_PROD: true
           NETLIFY_SITE_ID: ${{ secrets.QWIKCOLLAB_PROD_NETLIFY_SITE_ID }}
-          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
