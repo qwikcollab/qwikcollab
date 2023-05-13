@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { renderTextAndCursors } from '../lib/MultiCursorRenderer';
 import { motion } from 'framer-motion';
 
-const multiCursor = new MultiCursor({
+const getInstance = () => new MultiCursor({
   startText: 'Collaborative editor for busy engineers',
   initialCursors: [
     {
@@ -48,10 +48,11 @@ const multiCursor = new MultiCursor({
     }
   })
   .cursorDragStart('dv')
-  .moveCursor('dv', 5, 'r');
+  .moveCursor('dv', 2, 'r');
 
 export const TypeAnimation = () => {
   const [renderId, setRenderId] = useState<string>(uuid());
+  const [multiCursor, setMultiCursor] = useState<MultiCursor>(getInstance());
 
   useEffect(() => {
     multiCursor.addStateChangeCallBack(() => setRenderId(uuid())).start();
