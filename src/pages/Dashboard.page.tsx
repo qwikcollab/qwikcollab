@@ -1,7 +1,8 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { HttpClient, routes } from '../HttpClient';
 import { useEffect, useState } from 'react';
 import { CollabSession } from '../models/CollabSession';
+import PreviousCollabSessions from "../components/PreviousCollabSessions";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className={'flex justify-center items-center'} style={{ height: '40vh' }}>
+      <div className={'flex justify-center items-center'} style={{ height: '45vh' }}>
         <div className={'flex'}>
           <button
             data-theme="qc"
@@ -40,29 +41,15 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
-      <div className="overflow-y-auto" style={{ height: '40vh' }}>
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th>Collab Session Name</th>
-              <th>Created By</th>
-              <th>Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sessions.map((session) => {
-              return (
-                <tr key={session.id} className="hover">
-                  <td>
-                    <Link to={`/code/${session.id}`}>{session.name}</Link>
-                  </td>
-                  <td>{session.creator?.name}</td>
-                  <td>{session.createdAt ? new Date(session.createdAt).toDateString() : ''}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className={"flex justify-center overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 mx-3"}
+           style={{ height: '40vh' }}
+           data-theme="dark"
+      >
+        {
+          sessions.length ?
+            <PreviousCollabSessions sessions={sessions} /> :
+            <div className={"text-xs text-emerald-200 my-auto"}><span>Your sessions will be listed here !!</span></div>
+        }
       </div>
     </div>
   );

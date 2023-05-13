@@ -1,6 +1,14 @@
 import { User } from '../types';
 import { User as UserIcon } from 'react-feather';
 import { COLOR_MAP } from '../utils/utils';
+import { createAvatar } from '@dicebear/core';
+import * as initials from '@dicebear/initials'
+
+const getAvatar = (name: string) => {
+  return createAvatar(initials, {
+    seed: name,
+  }).toDataUriSync();
+}
 
 export const ConnectedUsers = ({ users }: { users: User[] }) => {
   return (
@@ -15,7 +23,11 @@ export const ConnectedUsers = ({ users }: { users: User[] }) => {
             {user.picture ? (
               <img
                 src={user.picture}
-                alt="Profile picture"
+                alt="Profile picture of user"
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  (currentTarget as HTMLImageElement).src = getAvatar(user.name);
+                }}
                 className={'w-7 h-7 rounded-full border-2'}
                 style={{ borderColor: COLOR_MAP[user.preferences?.color ?? ''] }}
               />

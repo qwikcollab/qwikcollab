@@ -1,5 +1,3 @@
-import { s } from 'vitest/dist/types-94cfe4b4';
-
 export const isFinite = (a: number | null | undefined) => {
   return !(a === null || a === undefined);
 };

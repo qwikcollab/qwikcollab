@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { javascript } from '@codemirror/lang-javascript';
 import { ChangeSet, EditorState, Text } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { oneDarkTheme } from '@codemirror/theme-one-dark';
 import {
   keymap,
   highlightSpecialChars,
@@ -124,11 +123,9 @@ export const Editor = ({ initialState, currentUser }: any) => {
 
       // update cursor position changes (offsets)
       mapChangesToCursor(transSpec.changes);
-      // CursorPositionStore.mapChanges(transSpec.changes);
 
       // update cursor pos for the user which typed (since offset happens after cursor)
       updateCursorPosition(changes);
-      //CursorPositionStore.insertOrUpdatePosition(changes);
 
       view.dispatch(transSpec);
 
@@ -203,11 +200,11 @@ export const Editor = ({ initialState, currentUser }: any) => {
   return (
     <div
       id="editorParent text-left"
-      className="border-green-400 border-2 mx-2 w-full position-relative"
+      className="border-emerald-300 border-2 mx-2 w-full position-relative"
     >
       {/* div with 2 divs inside equally split on screen */}
 
-      <div className={'text-left text-lg'} style={{ height: '70vh' }} ref={ref}></div>
+      <div className={'text-left text-lg'} style={{ height: '75vh' }} ref={ref}></div>
     </div>
   );
 };
