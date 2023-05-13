@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Generate build
-        run: VITE_API_ENDPOINT=${{ secrets.VITE_API_ENDPOINT }} npm run build
+        run: npm run build
         env:
           VITE_API_ENDPOINT: ${{ secrets.VITE_API_ENDPOINT }}
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
