@@ -3,29 +3,27 @@ import {Link} from "react-router-dom";
 
 export default function PreviousCollabSessions({sessions}: { sessions: CollabSession[]}) {
   return (
-    <table className="table w-full">
+    <table className="table overflow-scroll w-full">
       <thead>
       <tr>
-        <th>Collab Session Name</th>
-        <th>Open</th>
-        <th>Created By</th>
-        <th>Created At</th>
+        <th>Session Name</th>
+        <th>Link</th>
+        <th className={"hidden sm:table-cell"}>Created By</th>
+        <th className={"hidden md:table-cell"}>Created At</th>
       </tr>
       </thead>
       <tbody>
       {sessions.map((session) => {
         return (
           <tr key={session.id} className="hover">
-            <td>
-              <Link to={`/code/${session.id}`}>{session.name}</Link>
-            </td>
+            <td><span>{session.name}</span></td>
             <td>
               <Link to={`/code/${session.id}`}>
-                <button className="btn btn-outline btn-success btn-sm">Open</button>
+                <button data-theme="qc" className="btn btn-outline btn-secondary btn-sm">Open</button>
               </Link>
             </td>
-            <td>{session.creator?.name}</td>
-            <td>{session.createdAt ? new Date(session.createdAt).toDateString() : ''}</td>
+            <td className={"hidden sm:table-cell"}>{session.creator?.name}</td>
+            <td className={"hidden md:table-cell"}>{session.createdAt ? new Date(session.createdAt).toDateString() : ''}</td>
           </tr>
         );
       })}

@@ -1,33 +1,11 @@
-import { useNavigate } from 'react-router-dom';
 import { TypeAnimation } from './TypeAnimation';
 import {
-  CredentialResponse,
   GoogleLogin,
 } from '@react-oauth/google';
-import { HttpClient, routes, setAuthorizationHeader } from '../HttpClient';
-import { setToken } from '../utils/LocalStore';
-import { Profile } from '../types';
-import { setProfileState } from '../store/UsersStore';
+import useGoogleAuth from "../hooks/useGoogleAuth";
 
 export default function HomePage() {
-  const navigate = useNavigate();
-
-  const responseMessage = async (response: CredentialResponse) => {
-    const resp = await HttpClient.post(routes.registerGoogle, { credential: response.credential });
-    const token = resp.data.token;
-    if (token) {
-      setToken(token);
-      setAuthorizationHeader(token);
-      const profileResponse = await HttpClient.get(routes.profile);
-
-      const profile: Profile = profileResponse.data;
-      setProfileState(profile);
-      navigate('/dashboard');
-    }
-  };
-  const errorMessage = () => {
-    console.log('error');
-  };
+  const [googleAuthResponseMessage, googleAuthErrorMessage] = useGoogleAuth();
 
   return (
     <div className={'font-poppins'}>
@@ -50,8 +28,8 @@ export default function HomePage() {
               <GoogleLogin
                 size={'large'}
                 width={'50px'}
-                onSuccess={responseMessage}
-                onError={errorMessage}
+                onSuccess={googleAuthResponseMessage}
+                onError={googleAuthErrorMessage as any}
                 shape={'square'}
                 logo_alignment={'left'}
               />

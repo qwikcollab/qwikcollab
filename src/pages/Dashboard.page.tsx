@@ -41,7 +41,7 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
-      <div className={"flex justify-center overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 mx-3"}
+      <div className={"flex justify-center overflow-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 mx-3"}
            style={{ height: '40vh' }}
            data-theme="dark"
       >
