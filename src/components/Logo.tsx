@@ -1,13 +1,22 @@
 export default function Logo(props: any) {
+  let height = 500;
+  let width = 500;
+  if (props.height) {
+    height = props.height;
+  }
+  if (props.width) {
+    width = props.width;
+  }
+
   return (
     <svg
       className={props.classProps ? props.classProps : ''}
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      width="500"
       zoomAndPan="magnify"
       viewBox="0 0 375 374.999991"
-      height="500"
+      height={height}
+      width={width}
       preserveAspectRatio="xMidYMid meet"
       version="1.0"
     >

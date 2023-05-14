@@ -6,6 +6,7 @@ import CodePage from './pages/Code.page';
 import SignupPage from './pages/Signup.page';
 import NotFoundPage from './pages/NotFound.page';
 import Navbar from './components/Navbar';
+import Loader from './components/Loader';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Dashboard from './pages/Dashboard.page';
 import ProtectedRoute from './components/ProtectedRoute ';
@@ -19,6 +20,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/loader" element={<Loader />} />
           <Route
             path="/dashboard"
             element={
