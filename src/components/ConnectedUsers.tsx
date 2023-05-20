@@ -2,13 +2,13 @@ import { User } from '../types';
 import { User as UserIcon } from 'react-feather';
 import { COLOR_MAP } from '../utils/utils';
 import { createAvatar } from '@dicebear/core';
-import * as initials from '@dicebear/initials'
+import * as initials from '@dicebear/initials';
 
 const getAvatar = (name: string) => {
   return createAvatar(initials, {
-    seed: name,
+    seed: name
   }).toDataUriSync();
-}
+};
 
 export const ConnectedUsers = ({ users }: { users: User[] }) => {
   return (
