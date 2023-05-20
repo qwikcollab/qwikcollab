@@ -12,7 +12,7 @@ export interface JoinRoomMessage {
   userId: string;
 }
 
-export interface User extends JoinRoomMessage {
+export interface RoomUser extends JoinRoomMessage {
   userId: string;
   picture?: string;
   preferences?: {
@@ -34,7 +34,7 @@ export interface EditorChangesMessage {
 }
 
 export interface ExistingState {
-  users: User[];
+  users: RoomUser[];
   doc: string[];
   updates: Update[];
 }

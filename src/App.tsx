@@ -13,7 +13,6 @@ import ProtectedRoute from './components/ProtectedRoute ';
 import PublicRoute from './components/PublicRoute';
 
 function App() {
-  console.log('App render');
 
   return (
     <div className="App">

@@ -22,7 +22,7 @@ export default function Dashboard() {
       });
     } else {
       // TODO: throw a toast
-      console.log('error creating session');
+      console.error('error creating session');
     }
   };
 

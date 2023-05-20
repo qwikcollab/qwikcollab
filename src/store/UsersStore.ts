@@ -1,15 +1,15 @@
-import { Profile, User } from '../types';
+import { Profile, RoomUser } from '../types';
 import { create } from 'zustand';
 import { deleteKeyFromMap } from '../utils/utils';
 import { setProfile } from '../utils/LocalStore';
 
 interface UserStore {
-  users: Map<string, User>;
+  users: Map<string, RoomUser>;
   profile?: Profile;
 }
 
 export const useUsersStore = create<UserStore>(() => ({ users: new Map() }));
-export const addUser = (user: User) => {
+export const addUser = (user: RoomUser) => {
   useUsersStore.setState((prev) => ({
     users: new Map(prev.users).set(user.userId, user)
   }));
@@ -19,7 +19,7 @@ export const deleteUser = (userId: string) => {
     users: new Map(deleteKeyFromMap(prev.users, userId))
   }));
 };
-export const setUsers = (users: User[]) => {
+export const setUsers = (users: RoomUser[]) => {
   const map = new Map();
   users.forEach((u) => map.set(u.userId, u));
   useUsersStore.setState({

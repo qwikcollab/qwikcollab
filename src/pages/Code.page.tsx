@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Editor } from '../components/editor/Editor';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ExistingState, User } from '../types';
+import { ExistingState, RoomUser } from '../types';
 import { ConnectionSignal } from '../components/ConnectionSignal';
 import { ConnectedUsers } from '../components/ConnectedUsers';
 import { Connection } from '../utils/Connection';
@@ -29,8 +29,7 @@ export default function CodePage() {
       setConnected(true);
     });
 
-    socket.on('user-joined', (user: User) => {
-      console.log(`${user.name} joined room`);
+    socket.on('user-joined', (user: RoomUser) => {
       addUser(user);
     });
 
@@ -41,15 +40,12 @@ export default function CodePage() {
     });
 
     socket.on('disconnect', () => {
-      console.log('disconnected');
       setConnected(false);
     });
 
     socket.on('reconnecting', () => {
-      console.log('reconnecting');
       setConnected(false);
     });
-    console.log('rendered []');
 
     const cleanup = () => {
       socket.disconnect();
@@ -61,14 +57,6 @@ export default function CodePage() {
     };
   }, []);
 
-  /*
-  a user from dashboard click visits here
-  a user from external link visits here
-    - valid link
-    - invalid link
-
-   */
-
   useEffect(() => {
     if (!profile) {
       // throw error
@@ -76,8 +64,7 @@ export default function CodePage() {
       navigate('/404');
       return;
     }
-    // verify the r
-    console.log('emit join room');
+
     Connection.getSocket().emit(
       'join-room',
       { roomId, userId: profile.id },
@@ -86,7 +73,6 @@ export default function CodePage() {
           setRoomNotFound(true);
           return;
         }
-        console.log('initial state', estate);
         setInitialState(estate);
         setUsers(estate.users);
       }

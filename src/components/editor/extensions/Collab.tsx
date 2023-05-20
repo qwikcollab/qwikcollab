@@ -29,7 +29,6 @@ export class Collab {
 
         if (Collab.pushing || !unsentUpdates.length) return;
         Collab.pushing = true;
-        console.log(`sending update to server ==> ${view.state.selection.main.head}`);
 
         socket.emit('updateFromClient', {
           version: getSyncedVersion(view.state),

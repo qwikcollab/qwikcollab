@@ -60,8 +60,6 @@ export const Editor = ({ initialState, currentUser }: any) => {
   useEffect(() => {
     if (!element || !initialState) return;
 
-    console.log('editor state create');
-
     const state = EditorState.create({
       doc: Text.of(initialState.doc),
       extensions: [
@@ -129,11 +127,9 @@ export const Editor = ({ initialState, currentUser }: any) => {
 
       view.dispatch(transSpec);
 
-      console.log(`received update from server <== ${changes.head}`);
     });
 
     socket.on('positionUpdateFromServer', (changes: CursorPosition) => {
-      console.log('position update from server');
       updateCursorPosition(changes);
       // CursorPositionStore.insertOrUpdatePosition(changes);
       view.dispatch({});
@@ -150,7 +146,6 @@ export const Editor = ({ initialState, currentUser }: any) => {
           name: currentUser.name
         },
         function (pendingUpdates: SerializedUpdate[]) {
-          console.log('applying pending updates received from server');
           const changeSet: Update[] = pendingUpdates.map((u) => {
             return {
               changes: ChangeSet.fromJSON(u.serializedUpdates),
@@ -182,7 +177,6 @@ export const Editor = ({ initialState, currentUser }: any) => {
 
         if (!Collab.pushing && unsentUpdates.length) {
           Collab.pushing = true;
-          console.log(`sending *pending* updates to server ==> ${view.state.selection.main.head}`);
 
           socket.emit('updateFromClient', {
             version: getSyncedVersion(view.state),

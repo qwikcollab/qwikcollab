@@ -19,7 +19,7 @@ export default function useGoogleAuth() {
 
   const googleAuthErrorMessage = () => {
     // TODO: display toast
-    console.log('error');
+    console.error('login error');
   };
 
   return [googleAuthResponseMessage, googleAuthErrorMessage];

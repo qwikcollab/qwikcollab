@@ -32,7 +32,6 @@ export function underlineSelection(view: EditorView) {
   let effects: StateEffect<unknown>[] = view.state.selection.ranges
     .filter((r) => !r.empty)
     .map(({ from, to }) => addUnderline.of({ from, to }));
-  console.log('effects', effects);
   if (!effects.length) return false;
 
   if (!view.state.field(underlineField, false))

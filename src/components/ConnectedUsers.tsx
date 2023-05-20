@@ -1,4 +1,4 @@
-import { User } from '../types';
+import { RoomUser } from '../types';
 import { User as UserIcon } from 'react-feather';
 import { COLOR_MAP } from '../utils/utils';
 import { createAvatar } from '@dicebear/core';
@@ -10,7 +10,7 @@ const getAvatar = (name: string) => {
   }).toDataUriSync();
 };
 
-export const ConnectedUsers = ({ users }: { users: User[] }) => {
+export const ConnectedUsers = ({ users }: { users: RoomUser[] }) => {
   return (
     <>
       {users.map((user, index) => {

@@ -18,9 +18,7 @@ export default function Signup() {
     if (token) {
       setToken(token);
       setAuthorizationHeader(token);
-      console.log('request started');
       const profileResponse = await HttpClient.get(routes.profile);
-      console.log('request ended');
 
       const profile: Profile = profileResponse.data;
       setProfileState(profile);
