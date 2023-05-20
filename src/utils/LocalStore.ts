@@ -1,5 +1,10 @@
 import { Profile } from '../types';
 
+export const clearToken = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('profile');
+};
+
 export const getToken = () => {
   return localStorage.getItem('token');
 };
