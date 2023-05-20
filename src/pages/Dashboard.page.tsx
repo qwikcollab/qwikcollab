@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { HttpClient, routes } from '../HttpClient';
 import { useEffect, useState } from 'react';
 import { CollabSession } from '../models/CollabSession';
-import PreviousCollabSessions from "../components/PreviousCollabSessions";
+import PreviousCollabSessions from '../components/PreviousCollabSessions';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -41,15 +41,20 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
-      <div className={"flex justify-center overflow-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 mx-3"}
-           style={{ height: '40vh' }}
-           data-theme="dark"
-      >
-        {
-          sessions.length ?
-            <PreviousCollabSessions sessions={sessions} /> :
-            <div className={"text-xs text-emerald-200 my-auto"}><span>Your sessions will be listed here !!</span></div>
+      <div
+        className={
+          'overflow-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 mx-3'
         }
+        style={{ height: '40vh' }}
+        data-theme="dark"
+      >
+        {sessions.length ? (
+          <PreviousCollabSessions sessions={sessions} />
+        ) : (
+          <div className={'text-xs text-emerald-200 text-center'}>
+            <div className={'my-auto mt-10'}>Your collab sessions will be listed here !!</div>
+          </div>
+        )}
       </div>
     </div>
   );

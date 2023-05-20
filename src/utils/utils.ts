@@ -1,3 +1,5 @@
+import jwtDecode from 'jwt-decode';
+
 export const isFinite = (a: number | null | undefined) => {
   return !(a === null || a === undefined);
 };
@@ -19,4 +21,12 @@ export const COLOR_MAP: Record<string, string> = {
   red: '#ef4444',
   green: '#22c55e',
   blue: '#3b82f6'
+};
+
+export const isTokenExpired = (token: string | null) => {
+  if (!token) return true;
+  const decoded = jwtDecode(token); // decode the token
+  // @ts-ignore
+  const exp = decoded.exp; // get the expiration time
+  return Date.now() >= exp * 1000; // compare with current time
 };

@@ -10,6 +10,7 @@ import Loader from './components/Loader';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Dashboard from './pages/Dashboard.page';
 import ProtectedRoute from './components/ProtectedRoute ';
+import PublicRoute from './components/PublicRoute';
 
 function App() {
   console.log('App render');
@@ -19,7 +20,14 @@ function App() {
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <HomePage />
+              </PublicRoute>
+            }
+          />
           <Route path="/loader" element={<Loader />} />
           <Route
             path="/dashboard"

@@ -16,17 +16,18 @@ export const setAuthorizationHeader = (value: string) => {
   HttpClient.defaults.headers.common['Authorization'] = value;
 };
 
-HttpClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response.status === 401) {
-      return (window.location.href = '/');
-    }
-    return Promise.reject(error);
-  }
-);
+HttpClient.interceptors.response
+  .use
+  // (response) => {
+  //   return response;
+  // },
+  // (error) => {
+  //   if (error.response.status === 401) {
+  //     return (window.location.href = '/');
+  //   }
+  //   return Promise.reject(error);
+  // }
+  ();
 
 export const routes = {
   register: `${apiEndpoint}/auth/register`,

@@ -9,6 +9,7 @@ import { addUser, deleteUser, setUsers, useUsersStore } from '../store/UsersStor
 import { deleteCursor } from '../store/CursorStore';
 import Loader from '../components/Loader';
 import NotFoundComp from '../components/NotFoundComp';
+import Invite from '../components/Invite';
 
 export default function CodePage() {
   const navigate = useNavigate();
@@ -98,7 +99,8 @@ export default function CodePage() {
         <div className="flex basis-1/2 justify-start pl-2">
           <ConnectedUsers users={Array.from(usersStore.values())} />
         </div>
-        <div className="basis-1/2">
+        <div className="flex basis-1/2 justify-end">
+          <Invite />
           <ConnectionSignal connected={connected} />
         </div>
       </div>
@@ -106,12 +108,22 @@ export default function CodePage() {
       {!(initialState || roomNotFound) && <Loader />}
 
       {initialState && (
-        <div className={'flex'}>
-          {/*<div className={'flex w-1/6'} style={{ height: '70vh' }}>*/}
-          {/*  <ConnectedUsers users={Array.from(usersStore.values())} />*/}
-          {/*</div>*/}
-          <div className={'flex w-full'}>
-            <Editor initialState={initialState} currentUser={profile} />
+        <div className="mx-2">
+          <div className={'flex'}>
+            <div className={'w-full'}>
+              <Editor initialState={initialState} currentUser={profile} />
+            </div>
+          </div>
+          <div>
+            <button
+              data-theme="qc"
+              className="btn mt-2 btn-secondary btn-sm"
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              Go back
+            </button>
           </div>
         </div>
       )}

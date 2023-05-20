@@ -1,8 +1,6 @@
 import { TypeAnimation } from './TypeAnimation';
-import {
-  GoogleLogin,
-} from '@react-oauth/google';
-import useGoogleAuth from "../hooks/useGoogleAuth";
+import { GoogleLogin } from '@react-oauth/google';
+import useGoogleAuth from '../hooks/useGoogleAuth';
 
 export default function HomePage() {
   const [googleAuthResponseMessage, googleAuthErrorMessage] = useGoogleAuth();

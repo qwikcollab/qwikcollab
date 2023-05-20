@@ -4,51 +4,52 @@ import { v4 as uuid } from 'uuid';
 import { renderTextAndCursors } from '../lib/MultiCursorRenderer';
 import { motion } from 'framer-motion';
 
-const getInstance = () => new MultiCursor({
-  startText: 'Collaborative editor for busy engineers',
-  initialCursors: [
-    {
-      name: 'Sudheer',
-      id: 'sudh',
+const getInstance = () =>
+  new MultiCursor({
+    startText: 'Collaborative editor for busy engineers',
+    initialCursors: [
+      {
+        name: 'Sudheer',
+        id: 'sudh',
+        cursorStyles: {
+          title: 'bg-green-500',
+          line: 'border-green-500',
+          selectedText: 'bg-green-600'
+        },
+        pos: 15
+      }
+    ]
+  })
+    .moveCursor('sudh', 4, 'l')
+    .addCursor({
+      name: 'Roy',
+      id: 'roy',
+      pos: 29,
       cursorStyles: {
-        title: 'bg-green-500',
-        line: 'border-green-500',
-        selectedText: 'bg-green-600'
-      },
-      pos: 15
-    }
-  ]
-})
-  .moveCursor('sudh', 4, 'l')
-  .addCursor({
-    name: 'Roy',
-    id: 'roy',
-    pos: 29,
-    cursorStyles: {
-      title: 'bg-blue-500',
-      line: 'border-blue-500',
-      selectedText: 'bg-blue-600'
-    }
-  })
-  .type('sudh', ' text')
-  .cursorDragStart('roy')
-  .moveCursor('roy', 8, 'r')
-  .backSpace('sudh', 4)
-  .type('sudh', 'code')
-  .backSpace('roy')
-  .type('roy', 'dev')
-  .addCursor({
-    name: 'Denver',
-    id: 'dv',
-    pos: 0,
-    cursorStyles: {
-      title: 'bg-red-500',
-      line: 'border-red-500',
-      selectedText: 'bg-red-600'
-    }
-  })
-  .cursorDragStart('dv')
-  .moveCursor('dv', 2, 'r');
+        title: 'bg-blue-500',
+        line: 'border-blue-500',
+        selectedText: 'bg-blue-600'
+      }
+    })
+    .type('sudh', ' text')
+    .cursorDragStart('roy')
+    .moveCursor('roy', 8, 'r')
+    .backSpace('sudh', 4)
+    .type('sudh', 'code')
+    .backSpace('roy')
+    .type('roy', 'dev')
+    .addCursor({
+      name: 'Denver',
+      id: 'dv',
+      pos: 0,
+      cursorStyles: {
+        title: 'bg-red-500',
+        line: 'border-red-500',
+        selectedText: 'bg-red-600'
+      }
+    })
+    .cursorDragStart('dv')
+    .moveCursor('dv', 2, 'r');
 
 export const TypeAnimation = () => {
   const [renderId, setRenderId] = useState<string>(uuid());

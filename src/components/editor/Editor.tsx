@@ -200,7 +200,7 @@ export const Editor = ({ initialState, currentUser }: any) => {
   return (
     <div
       id="editorParent text-left"
-      className="border-emerald-300 border-2 mx-2 w-full position-relative"
+      className="border-emerald-300 border-2 w-full position-relative"
     >
       {/* div with 2 divs inside equally split on screen */}
 

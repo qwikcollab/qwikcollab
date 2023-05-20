@@ -1,34 +1,34 @@
 import { Navigate } from 'react-router-dom';
-import { getToken } from '../utils/LocalStore';
 import { useEffect, useState } from 'react';
-import { HttpClient, routes } from '../HttpClient';
-import { setProfileState } from '../store/UsersStore';
+import Loader from './Loader';
+import useAuthToken from '../hooks/useAuthToken';
+import { useUsersStore } from '../store/UsersStore';
 
-// @ts-ignore
-export default function ProtectedRoute({ children }) {
-  const token = getToken();
+export default function ProtectedRoute({ children }: { children: any }) {
+  const profile = useUsersStore((state) => state.profile);
+  const [setupProfile] = useAuthToken();
+
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   useEffect(() => {
-    if (getToken()) {
-      HttpClient.get(routes.profile)
-        .then((response) => {
-          setProfileState(response.data);
-        })
-        .catch((error) => {
-          // if (error.error.sort()
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+    if (profile) {
+      setLoading(false);
+      setIsAuthenticated(true);
+      return;
     }
+    setupProfile().then((value) => {
+      setLoading(false);
+      setIsAuthenticated(value);
+    });
   }, []);
 
-  if (!token) {
-    return <Navigate to={'/'} />;
+  if (loading) {
+    return <Loader />;
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (!isAuthenticated) {
+    return <Navigate to={'/'} />;
   }
 
   return children;
