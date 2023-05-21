@@ -1,6 +1,7 @@
 import { useUsersStore } from '../store/UsersStore';
 import { clearToken } from '../utils/LocalStore';
 import Modal from "./shared/Modal";
+import { googleLogout } from "@react-oauth/google";
 
 export default function Profile({ modalOpen, setModalOpen }: any) {
   const profile = useUsersStore((state) => state.profile);
@@ -26,6 +27,7 @@ export default function Profile({ modalOpen, setModalOpen }: any) {
             <button
               className="btn btn-outline btn-sm btn-success"
               onClick={() => {
+                googleLogout();
                 clearToken();
                 window.location.reload();
               }}

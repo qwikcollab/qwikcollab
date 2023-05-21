@@ -16,7 +16,7 @@ export const ConnectedUsers = ({ users }: { users: RoomUser[] }) => {
       {users.map((user, index) => {
         return (
           <div
-            className={'flex my-2 align-middle tooltip tooltip-right tooltip-info'}
+            className={'flex my-auto align-middle tooltip tooltip-right tooltip-info'}
             data-tip={user.name}
             key={index}
           >

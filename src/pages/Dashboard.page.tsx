@@ -48,7 +48,7 @@ export default function Dashboard() {
           <table className={"table overflow-scroll w-full"}>
             <thead>
               <tr>
-                <th colSpan={2} className={"bg-slate-600"}> Choose a language</th>
+                <th colSpan={2} className={"bg-slate-600"}> Choose a language </th>
               </tr>
             </thead>
             <tbody>
@@ -68,7 +68,7 @@ export default function Dashboard() {
             </tbody>
           </table>
           <div className={"flex justify-between mt-1"}>
-            <div> You have chosen {lang.name } !! </div>
+            <div> You have chosen { lang.name } !! </div>
             <div>
               <button
                 data-theme="qc"

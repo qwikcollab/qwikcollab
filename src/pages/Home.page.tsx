@@ -5,9 +5,12 @@ import InterviewSvg from '../assets/interview.svg';
 import HistorySvg from '../assets/history.svg';
 import LightningSvg from '../assets/lightning.svg';
 import Logo from "../components/Logo";
+import {useState} from "react";
+import Modal from "../components/shared/Modal";
 
 export default function HomePage() {
   const [googleAuthResponseMessage, googleAuthErrorMessage] = useGoogleAuth();
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div style={{background: '#1d2025'}} className={'font-poppins'}>
@@ -27,15 +30,23 @@ export default function HomePage() {
               <h1 className={'text-emerald-400'}>Collaborate.</h1>
             </div>
             <div className={'mb-2'}>
-              <GoogleLogin
-                size={'large'}
-                width={'50px'}
-                onSuccess={googleAuthResponseMessage}
-                onError={googleAuthErrorMessage as any}
-                shape={'square'}
-                logo_alignment={'left'}
-              />
+              <button data-theme='qc' className={'btn text-emerald-500 w-3/5 btn-md btn-outline hover:bg-emerald-400'} onClick={() => setModalOpen(true)}> Sign in </button>
             </div>
+            <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} modalClasses={'bg-white'}>
+              <div className={"text-center mb-10 font-bold text-black text-lg"}> <h1> Sign Up </h1> </div>
+              <div className={'w-full bg-white flex justify-center'}>
+                <div>
+                  <GoogleLogin
+                    size={'large'}
+                    width={'fullWidth'}
+                    onSuccess={googleAuthResponseMessage}
+                    onError={googleAuthErrorMessage as any}
+                    shape={'rectangular'}
+                    logo_alignment={'left'}
+                  />
+                </div>
+              </div>
+            </Modal>
           </div>
           <div
             className={

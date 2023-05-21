@@ -19,6 +19,7 @@ export const setAuthorizationHeader = (value: string) => {
 export const routes = {
   register: `${apiEndpoint}/auth/register`,
   registerGoogle: `${apiEndpoint}/auth/register/google`,
+  registerGoogle2: `${apiEndpoint}/auth/register/google2`,
   profile: `${apiEndpoint}/profile`,
   collabSession: `${apiEndpoint}/collab-sessions`
 };

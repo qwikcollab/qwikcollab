@@ -90,7 +90,7 @@ export default function CodePage() {
           {
             initialState?.lang &&
             <div className={"my-auto mr-2"}>
-              <img src={getLangSvg(initialState?.lang)} alt={initialState?.lang} className={"h-8 w-8"}/>
+              <img src={getLangSvg(initialState?.lang)} alt={initialState?.lang} className={"h-7 w-7"}/>
             </div>
           }
           <Invite />
