@@ -1,20 +1,12 @@
 import { useUsersStore } from '../store/UsersStore';
 import { clearToken } from '../utils/LocalStore';
+import Modal from "./shared/Modal";
 
 export default function Profile({ modalOpen, setModalOpen }: any) {
   const profile = useUsersStore((state) => state.profile);
 
   return (
-    <div className={`modal modal-open ${modalOpen ? 'visible' : 'invisible'}`}>
-      <div className="modal-box relative bg-slate-700">
-        <label
-          className="btn btn-sm btn-circle absolute right-2 top-2"
-          onClick={() => {
-            setModalOpen(false);
-          }}
-        >
-          ✕
-        </label>
+    <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
         <div>
           <div className={'flex items-center mb-2'}>
             <div className="avatar mr-2">
@@ -43,7 +35,6 @@ export default function Profile({ modalOpen, setModalOpen }: any) {
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </Modal>
   );
 }

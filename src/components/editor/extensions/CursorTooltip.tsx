@@ -106,6 +106,22 @@ function getCursorTooltips(state: EditorState) {
     });
 }
 
+const getStyleSpecs = () => {
+  const styleSpec: Record<any, any> = {};
+  Object.keys(COLOR_MAP).forEach((key) => {
+    styleSpec[`.cm-tooltip.cm-tooltip-${key}`] = {
+      backgroundColor: COLOR_MAP[key],
+      '&.cm-tooltip-arrow:before': {
+        borderTopColor: COLOR_MAP[key]
+      },
+      '&.cm-tooltip-arrow:after': {
+        borderTopColor: 'transparent'
+      }
+    }
+  });
+  return styleSpec;
+}
+
 const cursorTooltipBaseTheme = EditorView.baseTheme({
   '.cm-tooltip.cm-tooltip-cursor': {
     color: 'white',
@@ -113,33 +129,7 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
     padding: '2px 7px',
     borderRadius: '4px'
   },
-  '.cm-tooltip.cm-tooltip-red': {
-    backgroundColor: COLOR_MAP.red,
-    '&.cm-tooltip-arrow:before': {
-      borderTopColor: COLOR_MAP.red
-    },
-    '&.cm-tooltip-arrow:after': {
-      borderTopColor: 'transparent'
-    }
-  },
-  '.cm-tooltip.cm-tooltip-green': {
-    backgroundColor: COLOR_MAP.green,
-    '&.cm-tooltip-arrow:before': {
-      borderTopColor: COLOR_MAP.green
-    },
-    '&.cm-tooltip-arrow:after': {
-      borderTopColor: 'transparent'
-    }
-  },
-  '.cm-tooltip.cm-tooltip-blue': {
-    backgroundColor: COLOR_MAP.blue,
-    '&.cm-tooltip-arrow:before': {
-      borderTopColor: COLOR_MAP.blue
-    },
-    '&.cm-tooltip-arrow:after': {
-      borderTopColor: 'transparent'
-    }
-  }
+  ...getStyleSpecs(),
 });
 
 

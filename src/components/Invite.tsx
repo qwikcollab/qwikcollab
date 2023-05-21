@@ -1,5 +1,6 @@
 import { Link2 as ShareIcon, Copy as CopyIcon } from 'react-feather';
 import { useState } from 'react';
+import Modal from "./shared/Modal";
 
 export default function Invite() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -17,36 +18,25 @@ export default function Invite() {
         <ShareIcon className={'mr-1'} size={18} />
         <span>Invite</span>
       </button>
-      <div className={`modal modal-open ${modalOpen ? 'visible' : 'invisible'} `}>
-        <div className="modal-box relative bg-slate-700">
-          <label
-            htmlFor="my-modal-3"
-            className="btn btn-sm btn-circle absolute right-2 top-2"
-            onClick={() => {
-              setModalOpen(false);
-            }}
-          >
-            ✕
+      <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
+        <div>
+          <label className="label">
+            <span className="label-text">Copy and share this link with others</span>
           </label>
-          <div>
-            <label className="label">
-              <span className="label-text">Copy and share this link with others</span>
-            </label>
-            <label className="input-group">
-              <input type="text" value={location} className="input w-full" />
-              <button
-                data-theme={'qc'}
-                className={'btn btn-square btn-primary'}
-                onClick={() => {
-                  navigator.clipboard.writeText(location);
-                }}
-              >
-                <CopyIcon />
-              </button>
-            </label>
-          </div>
+          <label className="input-group">
+            <input readOnly type="text" value={location} className="input w-full" />
+            <button
+              data-theme={'qc'}
+              className={'btn btn-square btn-primary'}
+              onClick={() => {
+                navigator.clipboard.writeText(location);
+              }}
+            >
+              <CopyIcon />
+            </button>
+          </label>
         </div>
-      </div>
+      </Modal>
     </div>
   );
 }

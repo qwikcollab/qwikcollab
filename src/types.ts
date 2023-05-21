@@ -37,6 +37,7 @@ export interface ExistingState {
   users: RoomUser[];
   doc: string[];
   updates: Update[];
+  lang: string;
 }
 
 export interface CursorPosition {

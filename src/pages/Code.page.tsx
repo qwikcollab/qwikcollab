@@ -10,6 +10,7 @@ import { deleteCursor } from '../store/CursorStore';
 import Loader from '../components/Loader';
 import NotFoundComp from '../components/NotFoundComp';
 import Invite from '../components/Invite';
+import { getLangSvg } from "../utils/utils";
 
 export default function CodePage() {
   const navigate = useNavigate();
@@ -86,6 +87,12 @@ export default function CodePage() {
           <ConnectedUsers users={Array.from(usersStore.values())} />
         </div>
         <div className="flex basis-1/2 justify-end">
+          {
+            initialState?.lang &&
+            <div className={"my-auto mr-2"}>
+              <img src={getLangSvg(initialState?.lang)} alt={initialState?.lang} className={"h-8 w-8"}/>
+            </div>
+          }
           <Invite />
           <ConnectionSignal connected={connected} />
         </div>

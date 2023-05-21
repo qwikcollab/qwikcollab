@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { javascript } from '@codemirror/lang-javascript';
 import { ChangeSet, EditorState, Text } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
+import {StreamLanguage} from "@codemirror/language"
+import { python } from "@codemirror/legacy-modes/mode/python"
+import { javascript } from "@codemirror/legacy-modes/mode/javascript"
+import { typescript } from "@codemirror/legacy-modes/mode/javascript";
 import {
   keymap,
   highlightSpecialChars,
@@ -46,6 +49,19 @@ import { highlightField, highlightTheme } from './extensions/Highlight';
 import { Connection } from '../../utils/Connection';
 import { useParams } from 'react-router-dom';
 
+const getLangExtension = (lang: string) => {
+  switch (lang) {
+    case 'javascript':
+      return javascript;
+    case 'python':
+      return python;
+    case 'typescript':
+      return typescript;
+    default:
+      return javascript;
+  }
+}
+
 export const Editor = ({ initialState, currentUser }: any) => {
   const { roomId } = useParams();
   const socket = Connection.getSocket();
@@ -60,6 +76,7 @@ export const Editor = ({ initialState, currentUser }: any) => {
   useEffect(() => {
     if (!element || !initialState) return;
 
+    // @ts-ignore
     const state = EditorState.create({
       doc: Text.of(initialState.doc),
       extensions: [
@@ -90,7 +107,7 @@ export const Editor = ({ initialState, currentUser }: any) => {
           ...lintKeymap
         ]),
         barf,
-        javascript(),
+        StreamLanguage.define(getLangExtension(initialState.lang)),
         collab({ startVersion: initialState.updates.length }),
         Collab.pulgin,
         cursorTooltip(),
