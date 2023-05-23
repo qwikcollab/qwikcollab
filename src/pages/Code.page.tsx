@@ -43,7 +43,6 @@ export default function CodePage() {
     socket.on('disconnect', () => {
       if (profile) {
         deleteUser(profile?.id);
-        deleteCursor(profile?.id);
       }
       setConnected(false);
     });
@@ -63,7 +62,6 @@ export default function CodePage() {
   }, []);
 
   useEffect(() => {
-    console.log('join-room');
     if (!profile) {
       // throw error
       console.error('profile object should be filled at this point');
@@ -71,6 +69,9 @@ export default function CodePage() {
       return;
     }
 
+    if (!connected) return;
+
+    console.log('join-room');
     Connection.getSocket().emit(
       'join-room',
       { roomId, userId: profile.id },
@@ -83,7 +84,7 @@ export default function CodePage() {
         setUsers(estate.users);
       }
     );
-  }, []);
+  }, [connected]);
 
   return (
     <div data-theme="night">
