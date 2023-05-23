@@ -41,6 +41,10 @@ export default function CodePage() {
     });
 
     socket.on('disconnect', () => {
+      if (profile) {
+        deleteUser(profile?.id);
+        deleteCursor(profile?.id);
+      }
       setConnected(false);
     });
 
@@ -59,6 +63,7 @@ export default function CodePage() {
   }, []);
 
   useEffect(() => {
+    console.log('join-room');
     if (!profile) {
       // throw error
       console.error('profile object should be filled at this point');
