@@ -1,6 +1,6 @@
 import { Link2 as ShareIcon, Copy as CopyIcon } from 'react-feather';
 import { useState } from 'react';
-import Modal from "./shared/Modal";
+import Modal from './shared/Modal';
 
 export default function Invite() {
   const [modalOpen, setModalOpen] = useState(false);

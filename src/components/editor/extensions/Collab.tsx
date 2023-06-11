@@ -10,22 +10,22 @@ export class Collab {
   public static pulgin = ViewPlugin.define((view) => ({
     update(editorUpdate) {
       if (editorUpdate.docChanged) {
-        if (!socket.connected) {
-          console.log('early return collab plugin due to offline');
-          return;
-        }
         const unsentUpdates = sendableUpdates(view.state).map((u) => {
           // Update cursor position of remote users on screen based on local change
           // Note that this might not update cursor position of current user (eg: cursor is one position behind the insertion change)
 
           mapChangesToCursor(u.changes);
-          //CursorPositionStore.mapChanges(u.changes);
 
           return {
             serializedUpdates: u.changes.toJSON(),
             clientID: u.clientID
           };
         });
+
+        if (!socket.connected) {
+          console.log('early return collab plugin due to offline');
+          return;
+        }
 
         if (Collab.pushing || !unsentUpdates.length) return;
         Collab.pushing = true;

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChangeSet, EditorState, Text } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import {StreamLanguage} from "@codemirror/language"
-import { python } from "@codemirror/legacy-modes/mode/python"
-import { javascript } from "@codemirror/legacy-modes/mode/javascript"
-import { typescript } from "@codemirror/legacy-modes/mode/javascript";
+import { StreamLanguage } from '@codemirror/language';
+import { python } from '@codemirror/legacy-modes/mode/python';
+import { javascript } from '@codemirror/legacy-modes/mode/javascript';
+import { typescript } from '@codemirror/legacy-modes/mode/javascript';
 import {
   keymap,
   highlightSpecialChars,
@@ -35,7 +35,7 @@ import {
 import { lintKeymap } from '@codemirror/lint';
 import { barf } from 'thememirror';
 import { cursorTooltip } from './extensions/CursorTooltip';
-import { CursorPosition, EditorChangesMessage, SerializedUpdate } from '../../types';
+import { CursorPosition, EditorChangesMessage, RoomUser, SerializedUpdate } from '../../types';
 import {
   collab,
   getSyncedVersion,
@@ -48,6 +48,7 @@ import { mapChangesToCursor, updateCursorPosition } from '../../store/CursorStor
 import { highlightField, highlightTheme } from './extensions/Highlight';
 import { Connection } from '../../utils/Connection';
 import { useParams } from 'react-router-dom';
+import { setUsers } from '../../store/UsersStore';
 
 const getLangExtension = (lang: string) => {
   switch (lang) {
@@ -60,7 +61,7 @@ const getLangExtension = (lang: string) => {
     default:
       return javascript;
   }
-}
+};
 
 export const Editor = ({ initialState, currentUser }: any) => {
   const { roomId } = useParams();
@@ -143,7 +144,6 @@ export const Editor = ({ initialState, currentUser }: any) => {
       updateCursorPosition(changes);
 
       view.dispatch(transSpec);
-
     });
 
     socket.on('positionUpdateFromServer', (changes: CursorPosition) => {
@@ -159,11 +159,11 @@ export const Editor = ({ initialState, currentUser }: any) => {
         {
           version: getSyncedVersion(view.state),
           roomId: roomId,
-          userId: currentUser.id,
-          name: currentUser.name
+          userId: currentUser.id
         },
-        function (pendingUpdates: SerializedUpdate[]) {
-          const changeSet: Update[] = pendingUpdates.map((u) => {
+        function (data: { updates: SerializedUpdate[]; users: RoomUser[] }) {
+          setUsers(data.users);
+          const changeSet: Update[] = data.updates.map((u) => {
             return {
               changes: ChangeSet.fromJSON(u.serializedUpdates),
               clientID: u.clientID
@@ -173,39 +173,34 @@ export const Editor = ({ initialState, currentUser }: any) => {
           view.dispatch(transSpec);
           // TODO: handle cursor position changes of other users, currently it's fine as one extra click syncs it
 
-          syncOfflineChangesWithServer();
+          sendOfflineChangesToServer();
         }
       );
 
-      const syncOfflineChangesWithServer = () => {
+      const sendOfflineChangesToServer = () => {
         // Send client local changes to server while client was offline
         const unsentUpdates = sendableUpdates(view.state).map((u) => {
-          // Update cursor position of remote users on screen based on local change
-          // Note that this might not update cursor position of current user (eg: cursor is one position behind the insertion change)
-
-          mapChangesToCursor(u.changes);
-          //CursorPositionStore.mapChanges(u.changes);
-
           return {
             serializedUpdates: u.changes.toJSON(),
             clientID: u.clientID
           };
         });
 
-        if (!Collab.pushing && unsentUpdates.length) {
-          Collab.pushing = true;
-
-          socket.emit('updateFromClient', {
-            version: getSyncedVersion(view.state),
-            updates: unsentUpdates,
-            head: view.state.selection.main.head
-          });
-          Collab.pushing = false;
+        if (!unsentUpdates.length) {
+          return;
         }
+
+        socket.emit('updateFromClient', {
+          version: getSyncedVersion(view.state),
+          updates: unsentUpdates,
+          head: view.state.selection.main.head
+        });
       };
     });
 
-    return () => view.destroy();
+    return () => {
+      view.destroy();
+    };
   }, [element]);
 
   return (

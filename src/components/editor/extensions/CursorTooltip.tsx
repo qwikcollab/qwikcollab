@@ -14,7 +14,7 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
   StateField.define<readonly Tooltip[]>({
     create: getCursorTooltipsNew,
     update(tooltips, tr) {
-      const head = tr.selection?.main.head;
+      const head = tr.selection?.main.head ?? null;
       const anchor = tr.selection?.main.anchor;
 
       const profile = useUsersStore.getState().profile;
@@ -22,7 +22,11 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
         return tooltips;
       }
       // Doc didn't change but cursor position changed for current user (eg: mouse click)
-      if (!tr.docChanged && head && isCursorPositionChanged({ userId: profile.id, head, anchor })) {
+      if (
+        !tr.docChanged &&
+        head !== null &&
+        isCursorPositionChanged({ userId: profile.id, head, anchor })
+      ) {
         updateCursorPosition({
           userId: profile.id,
           head,
@@ -117,10 +121,10 @@ const getStyleSpecs = () => {
       '&.cm-tooltip-arrow:after': {
         borderTopColor: 'transparent'
       }
-    }
+    };
   });
   return styleSpec;
-}
+};
 
 const cursorTooltipBaseTheme = EditorView.baseTheme({
   '.cm-tooltip.cm-tooltip-cursor': {
@@ -129,9 +133,8 @@ const cursorTooltipBaseTheme = EditorView.baseTheme({
     padding: '2px 7px',
     borderRadius: '4px'
   },
-  ...getStyleSpecs(),
+  ...getStyleSpecs()
 });
-
 
 export function cursorTooltip() {
   return [cursorTooltipField(), cursorTooltipBaseTheme];

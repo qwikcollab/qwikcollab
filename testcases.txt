@@ -2,4 +2,4 @@
 2. If A marks cursor, it should show on B's screen
 3. If A disconnects and B types, the typed word should show on A screen after reconnecting
 (why send pending buffer instead of original text on reconnecting ?)
-4. If
+4. If A logs out then it should show on B's screen that A has logged out

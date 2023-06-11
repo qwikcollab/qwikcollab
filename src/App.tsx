@@ -13,7 +13,6 @@ import ProtectedRoute from './components/ProtectedRoute ';
 import PublicRoute from './components/PublicRoute';
 
 function App() {
-
   return (
     <div className="App">
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

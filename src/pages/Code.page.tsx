@@ -10,7 +10,7 @@ import { deleteCursor } from '../store/CursorStore';
 import Loader from '../components/Loader';
 import NotFoundComp from '../components/NotFoundComp';
 import Invite from '../components/Invite';
-import { getLangSvg } from "../utils/utils";
+import { getLangSvg } from '../utils/utils';
 
 export default function CodePage() {
   const navigate = useNavigate();
@@ -37,7 +37,6 @@ export default function CodePage() {
     socket.on('user-left', (userId: string) => {
       deleteUser(userId);
       deleteCursor(userId);
-      // CursorPositionStore.removeUser(userId);
     });
 
     socket.on('disconnect', () => {
@@ -69,7 +68,7 @@ export default function CodePage() {
       return;
     }
 
-    if (!connected) return;
+    if (!connected || initialState) return;
 
     console.log('join-room');
     Connection.getSocket().emit(
@@ -93,12 +92,15 @@ export default function CodePage() {
           <ConnectedUsers users={Array.from(usersStore.values())} />
         </div>
         <div className="flex basis-1/2 justify-end">
-          {
-            initialState?.lang &&
-            <div className={"my-auto mr-2"}>
-              <img src={getLangSvg(initialState?.lang)} alt={initialState?.lang} className={"h-7 w-7"}/>
+          {initialState?.lang && (
+            <div className={'my-auto mr-2'}>
+              <img
+                src={getLangSvg(initialState?.lang)}
+                alt={initialState?.lang}
+                className={'h-7 w-7'}
+              />
             </div>
-          }
+          )}
           <Invite />
           <ConnectionSignal connected={connected} />
         </div>

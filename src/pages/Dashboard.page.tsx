@@ -3,8 +3,8 @@ import { HttpClient, routes } from '../HttpClient';
 import { useEffect, useState } from 'react';
 import { CollabSession } from '../models/CollabSession';
 import PreviousCollabSessions from '../components/PreviousCollabSessions';
-import Modal from "../components/shared/Modal";
-import { languages } from "../utils/utils";
+import Modal from '../components/shared/Modal';
+import { languages } from '../utils/utils';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -37,7 +37,9 @@ export default function Dashboard() {
           <button
             data-theme="qc"
             className="btn btn-primary btn-lg"
-            onClick={() => {setModalOpen(true);}}
+            onClick={() => {
+              setModalOpen(true);
+            }}
           >
             Start the magic
           </button>
@@ -45,35 +47,48 @@ export default function Dashboard() {
       </div>
       <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
         <div>
-          <table className={"table overflow-scroll w-full"}>
+          <table className={'table overflow-scroll w-full'}>
             <thead>
               <tr>
-                <th colSpan={2} className={"bg-slate-600"}> Choose a language </th>
+                <th colSpan={2} className={'bg-slate-600'}>
+                  {' '}
+                  Choose a language{' '}
+                </th>
               </tr>
             </thead>
             <tbody>
               {
                 // For example: <tr class="&>*:bg-green-200">
-                languages.map((language,i) => {
+                languages.map((language, i) => {
                   return (
-                    <tr key={language.slug}
-                        className={`hover ${language.slug === lang.slug ? 'bg-slate-600' : '[&>*]:bg-slate-800'}`}
-                        onClick={()=>{ setLang(languages[i]) }}>
-                      <td><img src={language.icon} alt={language.name} /> </td>
-                      <td className={"text-left"}> { language.name } </td>
+                    <tr
+                      key={language.slug}
+                      className={`hover ${
+                        language.slug === lang.slug ? 'bg-slate-600' : '[&>*]:bg-slate-800'
+                      }`}
+                      onClick={() => {
+                        setLang(languages[i]);
+                      }}
+                    >
+                      <td>
+                        <img src={language.icon} alt={language.name} />{' '}
+                      </td>
+                      <td className={'text-left'}> {language.name} </td>
                     </tr>
                   );
                 })
               }
             </tbody>
           </table>
-          <div className={"flex justify-between mt-1"}>
-            <div> You have chosen { lang.name } !! </div>
+          <div className={'flex justify-between mt-1'}>
+            <div> You have chosen {lang.name} !! </div>
             <div>
               <button
                 data-theme="qc"
                 className="btn btn-primary btn-sm"
-                onClick={() => { createCollabSession(lang.slug); }}
+                onClick={() => {
+                  createCollabSession(lang.slug);
+                }}
               >
                 Go !
               </button>

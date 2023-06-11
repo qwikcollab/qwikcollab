@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
-import JsSvg from "../assets/lang/js.svg";
-import PythonSvg from "../assets/lang/python.svg";
+import JsSvg from '../assets/lang/js.svg';
+import PythonSvg from '../assets/lang/python.svg';
 
 export const isFinite = (a: number | null | undefined) => {
   return !(a === null || a === undefined);
@@ -18,7 +18,6 @@ export const deleteKeyFromMap = (map: Map<string, any>, key: string) => {
   map.delete(key);
   return map;
 };
-
 
 // public static cursorColors = [
 //   { color: '#ef4444', colorLight: '#fca5a5' }, // bg-red-500 and bg-red-300
@@ -41,7 +40,7 @@ export const COLOR_MAP: Record<string, string> = {
   pink: '#ec4899',
   teal: '#14b8a6',
   cyan: '#06b6d4',
-  lime: '#84cc16',
+  lime: '#84cc16'
 };
 
 export const isTokenExpired = (token: string | null) => {
@@ -63,7 +62,7 @@ export const languages = [
     icon: JsSvg,
     slug: 'javascript'
   }
-]
+];
 
 export const getLangSvg = (lang: string) => {
   const langObj = languages.find((l) => l.slug === lang);
@@ -71,4 +70,4 @@ export const getLangSvg = (lang: string) => {
     return langObj.icon;
   }
   return JsSvg;
-}
+};

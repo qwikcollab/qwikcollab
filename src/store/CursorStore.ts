@@ -30,11 +30,15 @@ export const deleteCursor = (userId: string) => {
 
 export const mapChangesToCursor = (changes: ChangeSet) => {
   const newCursors = new Map(useCursorStore.getState().cursors);
-  for (let [userId, pos] of newCursors) {
-    pos.head = changes.mapPos(pos.head);
-    if (pos.anchor) {
-      pos.anchor = changes.mapPos(pos.anchor);
+  try {
+    for (let [userId, pos] of newCursors) {
+      pos.head = changes.mapPos(pos.head);
+      if (pos.anchor) {
+        pos.anchor = changes.mapPos(pos.anchor);
+      }
     }
+    useCursorStore.setState(({}) => ({ cursors: newCursors }));
+  } catch (error) {
+    console.error('Cannot map cursors correctly: ', error);
   }
-  useCursorStore.setState(({}) => ({ cursors: newCursors }));
 };
