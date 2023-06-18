@@ -24,12 +24,12 @@ export class Collab {
         });
 
         if (!socket.connected) {
-          console.log('early return collab plugin due to offline');
+          // console.log('early return collab plugin due to offline');
           return;
         }
 
         if (!unsentUpdates.length) {
-          console.log('early return due to no unsent updates');
+          // console.log('early return due to no unsent updates');
           return;
         }
 
