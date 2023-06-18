@@ -1,31 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ChangeSet, EditorState, Text } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
-import { StreamLanguage } from '@codemirror/language';
-import { python } from '@codemirror/legacy-modes/mode/python';
-import { javascript } from '@codemirror/legacy-modes/mode/javascript';
-import { typescript } from '@codemirror/legacy-modes/mode/javascript';
 import {
-  keymap,
-  highlightSpecialChars,
-  drawSelection,
-  highlightActiveLine,
-  dropCursor,
-  rectangularSelection,
   crosshairCursor,
+  drawSelection,
+  dropCursor,
+  EditorView,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  highlightSpecialChars,
+  keymap,
   lineNumbers,
-  highlightActiveLineGutter
+  rectangularSelection
 } from '@codemirror/view';
 import {
-  defaultHighlightStyle,
-  syntaxHighlighting,
-  indentOnInput,
   bracketMatching,
+  defaultHighlightStyle,
   foldGutter,
-  foldKeymap
+  foldKeymap,
+  indentOnInput,
+  syntaxHighlighting
 } from '@codemirror/language';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { searchKeymap, highlightSelectionMatches } from '@codemirror/search';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import { oneDark } from '@codemirror/theme-one-dark';
 import {
   autocompletion,
   completionKeymap,
@@ -33,7 +30,6 @@ import {
   closeBracketsKeymap
 } from '@codemirror/autocomplete';
 import { lintKeymap } from '@codemirror/lint';
-import { barf } from 'thememirror';
 import { cursorTooltip } from './extensions/CursorTooltip';
 import { CursorPosition, EditorChangesMessage, RoomUser, SerializedUpdate } from '../../types';
 import {
@@ -48,22 +44,11 @@ import { mapChangesToCursor, updateCursorPosition } from '../../store/CursorStor
 import { highlightField, highlightTheme } from './extensions/Highlight';
 import { Connection } from '../../utils/Connection';
 import { useParams } from 'react-router-dom';
-import { setUsers } from '../../store/UsersStore';
+import { setUsers, useUsersStore } from '../../store/UsersStore';
+import { getLangExtension } from './extensions/LangExtension';
 
-const getLangExtension = (lang: string) => {
-  switch (lang) {
-    case 'javascript':
-      return javascript;
-    case 'python':
-      return python;
-    case 'typescript':
-      return typescript;
-    default:
-      return javascript;
-  }
-};
-
-export const Editor = ({ initialState, currentUser }: any) => {
+export const Editor = ({ initialState }: any) => {
+  const profile = useUsersStore((state) => state.profile);
   const { roomId } = useParams();
   const socket = Connection.getSocket();
   const [element, setElement] = useState<HTMLElement>();
@@ -77,7 +62,6 @@ export const Editor = ({ initialState, currentUser }: any) => {
   useEffect(() => {
     if (!element || !initialState) return;
 
-    // @ts-ignore
     const state = EditorState.create({
       doc: Text.of(initialState.doc),
       extensions: [
@@ -93,6 +77,7 @@ export const Editor = ({ initialState, currentUser }: any) => {
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         bracketMatching(),
         closeBrackets(),
+        getLangExtension(initialState.lang),
         autocompletion(),
         rectangularSelection(),
         crosshairCursor(),
@@ -107,8 +92,7 @@ export const Editor = ({ initialState, currentUser }: any) => {
           ...completionKeymap,
           ...lintKeymap
         ]),
-        barf,
-        StreamLanguage.define(getLangExtension(initialState.lang)),
+        oneDark,
         collab({ startVersion: initialState.updates.length }),
         Collab.pulgin,
         cursorTooltip(),
@@ -154,12 +138,16 @@ export const Editor = ({ initialState, currentUser }: any) => {
 
     socket.io.on('reconnect', () => {
       // Get pending updates from server while client was offline
+      if (!profile) {
+        console.error('Profile is not set');
+      }
+
       socket.emit(
         'getPendingUpdates',
         {
           version: getSyncedVersion(view.state),
           roomId: roomId,
-          userId: currentUser.id
+          userId: profile?.id
         },
         function (data: { updates: SerializedUpdate[]; users: RoomUser[] }) {
           setUsers(data.users);
@@ -193,12 +181,17 @@ export const Editor = ({ initialState, currentUser }: any) => {
         socket.emit('updateFromClient', {
           version: getSyncedVersion(view.state),
           updates: unsentUpdates,
-          head: view.state.selection.main.head
+          head: view.state.selection.main.head,
+          roomId: roomId
         });
       };
     });
 
     return () => {
+      // turning of listeners otherwise listeners which are bound to state values
+      // will have stale state values due to closures and haunt you
+      socket.off('updateFromServer');
+      socket.off('positionUpdateFromServer');
       view.destroy();
     };
   }, [element]);

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from './utils/LocalStore';
+import { getToken } from './LocalStore';
 const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
 
 export const HttpClient = axios.create({
@@ -21,5 +21,8 @@ export const routes = {
   registerGoogle: `${apiEndpoint}/auth/register/google`,
   registerGoogle2: `${apiEndpoint}/auth/register/google2`,
   profile: `${apiEndpoint}/profile`,
-  collabSession: `${apiEndpoint}/collab-sessions`
+  collabSession: `${apiEndpoint}/collab-sessions`,
+  collabSessionId(id: string) {
+    return `${apiEndpoint}/collab-sessions/${id}`;
+  }
 };

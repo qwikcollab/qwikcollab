@@ -14,14 +14,17 @@
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.8.0",
     "@codemirror/collab": "^6.0.0",
     "@codemirror/commands": "^6.1.2",
+    "@codemirror/lang-java": "^6.0.1",
     "@codemirror/lang-javascript": "^6.1.1",
+    "@codemirror/lang-php": "^6.0.1",
     "@codemirror/language": "^6.7.0",
     "@codemirror/legacy-modes": "^6.3.2",
     "@codemirror/search": "^6.2.2",
     "@codemirror/state": "^6.1.2",
-    "@codemirror/theme-one-dark": "^6.1.0",
+    "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.4.0",
     "@dicebear/core": "^6.0.3",
     "@dicebear/initials": "^6.0.3",
@@ -38,7 +41,6 @@
     "react-router-dom": "^6.4.2",
     "socket.io-client": "^4.6.1",
     "tailwind-scrollbar": "^3.0.1",
-    "thememirror": "^2.0.1",
     "uuid": "^9.0.0",
     "zustand": "^4.3.7"
   },

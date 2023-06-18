@@ -1,4 +1,5 @@
 import { Update } from '@codemirror/collab';
+import { Langs } from './utils/Languages';
 
 export interface Profile {
   name: string;
@@ -37,7 +38,8 @@ export interface ExistingState {
   users: RoomUser[];
   doc: string[];
   updates: Update[];
-  lang: string;
+  lang: Langs;
+  sessionName: string;
 }
 
 export interface CursorPosition {

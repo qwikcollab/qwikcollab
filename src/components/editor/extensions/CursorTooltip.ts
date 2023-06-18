@@ -16,9 +16,13 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
     update(tooltips, tr) {
       const head = tr.selection?.main.head ?? null;
       const anchor = tr.selection?.main.anchor;
-
+      const roomId = useUsersStore.getState().roomId;
       const profile = useUsersStore.getState().profile;
       if (!profile) {
+        return tooltips;
+      }
+      if (!roomId) {
+        console.error('why is room id empty ?');
         return tooltips;
       }
       // Doc didn't change but cursor position changed for current user (eg: mouse click)
@@ -35,7 +39,8 @@ const cursorTooltipField = (socket = Connection.getSocket()) =>
         socket.emit('positionUpdateFromClient', {
           head,
           anchor,
-          userId: profile.id
+          userId: profile.id,
+          roomId
         });
       }
 

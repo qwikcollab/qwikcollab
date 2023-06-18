@@ -1,5 +1,5 @@
 import { CredentialResponse } from '@react-oauth/google';
-import { HttpClient, routes } from '../HttpClient';
+import { HttpClient, routes } from '../utils/HttpClient';
 import { setToken } from '../utils/LocalStore';
 import { useNavigate } from 'react-router-dom';
 import useAuthToken from './useAuthToken';

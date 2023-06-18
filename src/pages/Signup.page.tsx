@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HttpClient, routes, setAuthorizationHeader } from '../HttpClient';
+import { HttpClient, routes, setAuthorizationHeader } from '../utils/HttpClient';
 import { setToken } from '../utils/LocalStore';
 import { Profile } from '../types';
 import { setProfileState } from '../store/UsersStore';

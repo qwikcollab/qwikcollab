@@ -7,8 +7,10 @@ import LightningSvg from '../assets/lightning.svg';
 import Logo from '../components/Logo';
 import { useState } from 'react';
 import Modal from '../components/shared/Modal';
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [googleAuthResponseMessage, googleAuthErrorMessage] = useGoogleAuth();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -33,7 +35,14 @@ export default function HomePage() {
               <button
                 data-theme="qc"
                 className={'btn text-emerald-500 w-3/5 btn-md btn-outline hover:bg-emerald-400'}
-                onClick={() => setModalOpen(true)}
+                onClick={() => {
+                  if (import.meta.env.MODE === 'development') {
+                    // only for local development
+                    navigate('/signup');
+                    return;
+                  }
+                  setModalOpen(true);
+                }}
               >
                 {' '}
                 Sign in{' '}

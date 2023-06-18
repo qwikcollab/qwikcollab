@@ -2,6 +2,7 @@ import { ViewPlugin } from '@codemirror/view';
 import { getSyncedVersion, sendableUpdates } from '@codemirror/collab';
 import { mapChangesToCursor } from '../../../store/CursorStore';
 import { Connection } from '../../../utils/Connection';
+import { useUsersStore } from '../../../store/UsersStore';
 const socket = Connection.getSocket();
 export class Collab {
   public static pushing = false;
@@ -27,13 +28,23 @@ export class Collab {
           return;
         }
 
-        if (Collab.pushing || !unsentUpdates.length) return;
-        Collab.pushing = true;
+        if (!unsentUpdates.length) {
+          console.log('early return due to no unsent updates');
+          return;
+        }
+
+        const roomId = useUsersStore.getState().roomId;
+
+        if (!roomId) {
+          console.error('early return due to empty room id');
+          return;
+        }
 
         socket.emit('updateFromClient', {
           version: getSyncedVersion(view.state),
           updates: unsentUpdates,
-          head: view.state.selection.main.head
+          head: view.state.selection.main.head,
+          roomId
         });
         Collab.pushing = false;
       }

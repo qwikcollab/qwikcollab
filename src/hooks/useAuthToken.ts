@@ -1,4 +1,4 @@
-import { HttpClient, routes, setAuthorizationHeader } from '../HttpClient';
+import { HttpClient, routes, setAuthorizationHeader } from '../utils/HttpClient';
 import { Profile } from '../types';
 import { setProfileState } from '../store/UsersStore';
 import { getToken } from '../utils/LocalStore';

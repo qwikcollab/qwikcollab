@@ -1,5 +1,6 @@
 import { CollabSession } from '../models/CollabSession';
 import { Link } from 'react-router-dom';
+import { languages } from '../utils/Languages';
 
 export default function PreviousCollabSessions({ sessions }: { sessions: CollabSession[] }) {
   return (
@@ -14,9 +15,11 @@ export default function PreviousCollabSessions({ sessions }: { sessions: CollabS
       </thead>
       <tbody>
         {sessions.map((session) => {
+          const language = languages[session.lang];
           return (
             <tr key={session.id} className="hover">
               <td>
+                <img src={language.icon} alt={language.slug} className={'w-6 h-6 mr-3 inline'} />{' '}
                 <span>{session.name}</span>
               </td>
               <td>

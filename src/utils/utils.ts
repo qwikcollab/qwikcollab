@@ -1,6 +1,4 @@
 import jwtDecode from 'jwt-decode';
-import JsSvg from '../assets/lang/js.svg';
-import PythonSvg from '../assets/lang/python.svg';
 
 export const isFinite = (a: number | null | undefined) => {
   return !(a === null || a === undefined);
@@ -49,25 +47,4 @@ export const isTokenExpired = (token: string | null) => {
   // @ts-ignore
   const exp = decoded.exp; // get the expiration time
   return Date.now() >= exp * 1000; // compare with current time
-};
-
-export const languages = [
-  {
-    name: 'Python',
-    icon: PythonSvg,
-    slug: 'python'
-  },
-  {
-    name: 'JavaScript',
-    icon: JsSvg,
-    slug: 'javascript'
-  }
-];
-
-export const getLangSvg = (lang: string) => {
-  const langObj = languages.find((l) => l.slug === lang);
-  if (langObj) {
-    return langObj.icon;
-  }
-  return JsSvg;
 };

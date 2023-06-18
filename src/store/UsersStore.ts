@@ -6,6 +6,7 @@ import { setProfile } from '../utils/LocalStore';
 interface UserStore {
   users: Map<string, RoomUser>;
   profile?: Profile;
+  roomId?: string;
 }
 
 export const useUsersStore = create<UserStore>(() => ({ users: new Map() }));
@@ -31,4 +32,9 @@ export const setProfileState = (profile: Profile) => {
     profile: profile
   });
   setProfile(profile);
+};
+export const setRoomId = (roomId: string) => {
+  useUsersStore.setState({
+    roomId: roomId
+  });
 };

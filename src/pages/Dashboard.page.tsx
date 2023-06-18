@@ -1,16 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { HttpClient, routes } from '../HttpClient';
+import { HttpClient, routes } from '../utils/HttpClient';
 import { useEffect, useState } from 'react';
 import { CollabSession } from '../models/CollabSession';
 import PreviousCollabSessions from '../components/PreviousCollabSessions';
 import Modal from '../components/shared/Modal';
-import { languages } from '../utils/utils';
+import { Langs, languages } from '../utils/Languages';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [sessions, setSessions] = useState<CollabSession[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [lang, setLang] = useState(languages[0]);
+  const [lang, setLang] = useState(Langs.JS);
 
   useEffect(() => {
     HttpClient.get(routes.collabSession).then((response) => {
@@ -59,21 +59,21 @@ export default function Dashboard() {
             <tbody>
               {
                 // For example: <tr class="&>*:bg-green-200">
-                languages.map((language, i) => {
+                Object.values(languages).map((language, i) => {
                   return (
                     <tr
                       key={language.slug}
                       className={`hover ${
-                        language.slug === lang.slug ? 'bg-slate-600' : '[&>*]:bg-slate-800'
+                        language.slug === lang ? 'bg-slate-600' : '[&>*]:bg-slate-800'
                       }`}
                       onClick={() => {
-                        setLang(languages[i]);
+                        setLang(language.slug);
                       }}
                     >
                       <td>
-                        <img src={language.icon} alt={language.name} />{' '}
+                        <img src={language.icon} alt={language.slug} className={'w-8 h-8'} />{' '}
                       </td>
-                      <td className={'text-left'}> {language.name} </td>
+                      <td className={'text-left'}> {language.slug.toUpperCase()} </td>
                     </tr>
                   );
                 })
@@ -81,13 +81,13 @@ export default function Dashboard() {
             </tbody>
           </table>
           <div className={'flex justify-between mt-1'}>
-            <div> You have chosen {lang.name} !! </div>
+            <div> You have chosen {lang} !! </div>
             <div>
               <button
                 data-theme="qc"
                 className="btn btn-primary btn-sm"
                 onClick={() => {
-                  createCollabSession(lang.slug);
+                  createCollabSession(lang);
                 }}
               >
                 Go !

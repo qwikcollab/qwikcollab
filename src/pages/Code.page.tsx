@@ -5,18 +5,20 @@ import { ExistingState, RoomUser } from '../types';
 import { ConnectionSignal } from '../components/ConnectionSignal';
 import { ConnectedUsers } from '../components/ConnectedUsers';
 import { Connection } from '../utils/Connection';
-import { addUser, deleteUser, setUsers, useUsersStore } from '../store/UsersStore';
+import { addUser, deleteUser, setRoomId, setUsers, useUsersStore } from '../store/UsersStore';
 import { deleteCursor } from '../store/CursorStore';
 import Loader from '../components/Loader';
 import NotFoundComp from '../components/NotFoundComp';
 import Invite from '../components/Invite';
-import { getLangSvg } from '../utils/utils';
+import { languages } from '../utils/Languages';
+import { useSessionInfo } from '../store/SessionInfoStore';
 
 export default function CodePage() {
   const navigate = useNavigate();
   // cant use ref because userId has to be same
   const usersStore = useUsersStore((state) => state.users);
   const profile = useUsersStore((state) => state.profile);
+  const { setSession } = useSessionInfo();
 
   const { roomId } = useParams();
   const [connected, setConnected] = useState(Connection.getSocket().connected);
@@ -79,6 +81,12 @@ export default function CodePage() {
           setRoomNotFound(true);
           return;
         }
+        setSession({
+          id: roomId as string,
+          lang: estate.lang,
+          name: estate.sessionName
+        });
+        setRoomId(roomId ?? '');
         setInitialState(estate);
         setUsers(estate.users);
       }
@@ -95,7 +103,7 @@ export default function CodePage() {
           {initialState?.lang && (
             <div className={'my-auto mr-2'}>
               <img
-                src={getLangSvg(initialState?.lang)}
+                src={languages[initialState.lang].icon}
                 alt={initialState?.lang}
                 className={'h-7 w-7'}
               />
@@ -112,7 +120,7 @@ export default function CodePage() {
         <div className="mx-2">
           <div className={'flex'}>
             <div className={'w-full'}>
-              <Editor initialState={initialState} currentUser={profile} />
+              <Editor initialState={initialState} />
             </div>
           </div>
           <div>
@@ -120,6 +128,7 @@ export default function CodePage() {
               data-theme="qc"
               className="btn mt-2 btn-secondary btn-sm"
               onClick={() => {
+                Connection.getSocket().emit('leave-room');
                 navigate(-1);
               }}
             >
